@@ -1,9 +1,9 @@
 {
-  "name": "react_vite_template",
+  "name": "triple_individual",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/Ivan-Malakhovskyi/react_vite_template",
+  "homepage": "https://github.com/Ivan-Malakhovskyi/triple_individual",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

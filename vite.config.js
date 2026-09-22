@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { fileURLToPath, URL } from "node:url";
 
 //! IF you are using routes like react router add base: /Repo_name/
 //! https://vite.dev/guide/static-deploy#github-pages
@@ -10,8 +10,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  base: '/react_vite_template',
+  base: "/triple_individual",
 });
