@@ -1,122 +1,136 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
-import "./App.css";
+import React, { Component } from "react";
 
-function App() {
-  const [count, setCount] = useState(0);
+const initItems = [
+  { id: crypto.randomUUID(), text: "task1", completed: false },
+  { id: crypto.randomUUID(), text: "task2", completed: false },
+  { id: crypto.randomUUID(), text: "task3", completed: false },
+  { id: crypto.randomUUID(), text: "task4", completed: false },
+  { id: crypto.randomUUID(), text: "task5", completed: false },
+  { id: crypto.randomUUID(), text: "task6", completed: true },
+];
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+export class App extends Component {
+  constructor(props) {
+    super(props);
+
+    const data = localStorage.getItem("user-data");
+    console.log("🚀 ~ App ~ constructor ~ data:", data);
+
+    this.state = {
+      userData: data
+        ? JSON.parse(data)
+        : {
+            name: "",
+            email: "",
+          },
+      count: 0,
+      items: initItems,
+    };
+  }
+
+  // state = {
+  //   userData: {
+  //     name: "",
+  //     email: "",
+  //   },
+  //   count: 0,
+  //   items: initItems,
+  // };
+
+  componentDidMount() {
+    // const data = localStorage.getItem("user-data");
+
+    // if (data !== null) {
+    //   this.setState({ userData: JSON.parse(data) });
+    // }
+
+    console.log("COMPONENT WAS RENDER");
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log(prevState.userData === this.state.userData);
+
+    if (prevState.userData !== this.state.userData) {
+      console.log("OLD STATE", prevState);
+      console.log("CURRENT", this.state.userData);
+      localStorage.setItem("user-data", JSON.stringify(this.state.userData));
+    }
+  }
+
+  componentWillUnmount() {
+    console.log("COMPONENT WAS DELETED");
+  }
+
+  incrementCount = () => {
+    this.setState(prev => ({ count: prev.count + 1 }));
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    const form = e.currentTarget;
+
+    const name = form.elements.name.value;
+    const email = form.elements.email.value;
+
+    this.setState({
+      userData: {
+        name,
+        email,
+      },
+    });
+
+    e.target.reset();
+  };
+
+  handleDelete = id => {
+    this.setState(prev => ({
+      items: prev.items.filter(item => item.id !== id),
+    }));
+  };
+
+  render() {
+    const { items, userData } = this.state;
+
+    return (
+      <div>
+        <h1>Життєвий цикл компонента</h1>
+
+        <p>Name {userData.name}</p>
+        <p>Email {userData.email}</p>
+
+        <p>Поточний лічильник: {this.state.count}</p>
+
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount(count => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Name:
+              <input name="name" type="text" />
+            </label>
+            <label>
+              email:
+              <input name="email" type="email" />
+            </label>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+            <button type="submit">Create</button>
+          </form>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  );
+        <button onClick={this.incrementCount}>Збільшити лічильник</button>
+
+        <br />
+
+        <ul>
+          {items.map(({ id, text, completed }) => (
+            <li key={id}>
+              <p>{text}</p>
+              <p>{completed ? "Active" : "Non-active"}</p>
+              <button type="button" onClick={() => this.handleDelete(id)}>
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 }
-
-export default App;
