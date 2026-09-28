@@ -7,6 +7,8 @@
 
 ## Life cycle stages
 
+//!
+
 - mounting
 - updating
 - unmounting
