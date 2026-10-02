@@ -22,7 +22,7 @@ export class Articles extends Component {
   };
 
   fetchArticles = async articleName => {
-    this.setState({ articles: [], status: "pending" });
+    this.setState({ status: "pending" });
     try {
       const resp = await articlesAPI.fetchArticles(articleName);
       this.setState({ articles: resp, status: "resolved" });
