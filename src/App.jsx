@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { ToastContainer } from "react-toastify";
 import { SearchForm } from "./components/SearchForm";
 import { Articles } from "./components/Articles";
 
@@ -22,6 +23,8 @@ export class App extends Component {
 
         <SearchForm onSubmit={this.handleSubmit} />
         <Articles articleName={articleName} />
+
+        <ToastContainer autoClose={3000} />
       </section>
     );
   }

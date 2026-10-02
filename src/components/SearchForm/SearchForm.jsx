@@ -17,7 +17,10 @@ export class SearchForm extends Component {
     e.preventDefault();
 
     if (this.state.articleName.trim() === "") {
-      alert("Введіть назву статті");
+      toast("Введіть назву статті", {
+        position: "top-right",
+        type: "error",
+      });
       return;
     }
 
