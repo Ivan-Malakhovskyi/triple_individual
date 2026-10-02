@@ -1,20 +1,30 @@
-# QA
+1. Де і коли робити http запити ?
 
-1. Form task ?
-2. Controlled vs uncontrolled element ? When to use what ?
-3. How many state does a checkbox have ? How to get checkbox value while
-   handling ?
+- Яким компонентам будуть необхідні отримані дані?
+- Де буде рендеритися індикатор завантаження, доки виконується HTTP-запит?
+- Де буде рендеритися повідомлення у разі помилки HTTP-запиту?
 
-## Life cycle stages
+2. Базовий приклад
+3. Створення App, компоненти:
 
-//!
+- Фільтер за ключовим словом
+- показувати знайдений елемент
 
-- mounting
-- updating
-- unmounting
+4. Флоу даних SearchForm => App => Articles
+5. HTTP request в Articles
+6. Error handling
+7. Ховаємо старий контент, коли відбувається запит за новим
+8. State machine, statuses:
 
-**Common**
+- idle - запита ще не має
+- pending - loading
+- rejected - ❌
+- resolved - ✅
 
-- componentDidMount
-- componentDidUpdate
-- componentWillUnmount.
+Плюси такого підходу
+
+- не потрібно скидати поля
+- не потрібно слідкувати за станами полів
+- зрозуміла поведінка рендеру розмітки
+
+9. Розносимо розмітку в render() по окремих компонентах
