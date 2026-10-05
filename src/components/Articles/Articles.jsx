@@ -13,6 +13,7 @@ export class Articles extends Component {
   state = {
     articles: [],
     status: "idle",
+    error: null,
   };
 
   componentDidUpdate = async (prevProps, prevState) => {
@@ -32,14 +33,14 @@ export class Articles extends Component {
   };
 
   render() {
-    const { articles, status } = this.state;
+    const { articles, status, error } = this.state;
 
     if (status === "idle") {
       return <p>Введіть назву статті</p>;
     }
 
     if (status === "pending") {
-      return <PendingView />;
+      return <PendingView articleName={this.props.articleName} />;
     }
 
     if (status === "resolved") {
@@ -47,7 +48,7 @@ export class Articles extends Component {
     }
 
     if (status === "rejected") {
-      return <ErrorView message="Щось пішло не так" />;
+      return <ErrorView message={error.message} />;
     }
   }
 }

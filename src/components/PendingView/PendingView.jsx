@@ -1,17 +1,13 @@
 import React from "react";
 import { Spinner } from "../Spinner";
-import { ArticleListItem } from "../ArticleListItem";
+import { ArticlesList } from "../ArticlesList";
 
 export const PendingView = ({ articleName }) => {
-  const articleSkeleton = {
-    title: (
-      <h2>
-        Current search query <b>{articleName}</b>
-      </h2>
-    ),
+  const articlesSkeleton = Array.from({ length: 10 }, () => ({
+    title: articleName,
     url: "http://example.com",
     objectID: crypto.randomUUID(),
-  };
+  }));
 
   return (
     <div>
@@ -19,7 +15,7 @@ export const PendingView = ({ articleName }) => {
         <Spinner />
       </div>
 
-      <ArticleListItem article={articleSkeleton} />
+      <ArticlesList articles={articlesSkeleton} />
     </div>
   );
 };
