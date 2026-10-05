@@ -6,8 +6,6 @@ import { Articles } from "./components/Articles";
 export class App extends Component {
   state = {
     articleName: "",
-    isLoading: false,
-    error: null,
   };
 
   handleSubmit = articleName => {
