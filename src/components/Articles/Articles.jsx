@@ -1,73 +1,102 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import articlesAPI from "../services/articlesService";
 import { ArticlesList } from "../ArticlesList";
 import { ErrorView } from "../ErrorView";
 import { PendingView } from "../PendingView";
 
-// idle - стан простою
-// pending - завантаження
-// resolved - успіх ✅
-// rejected - ❌
+const STATUS = {
+  IDLE: "idle",
+  PENDING: "pending",
+  RESOLVED: "resolved",
+  REJECTED: "rejected",
+};
 
-export class Articles extends Component {
+export const Articles = ({ articleName }) => {
+  const [articles, setArticles] = useState([]);
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => await fetchArticles(articleName);
+
+    fetchData();
+  }, [articleName]);
+
+  const fetchArticles = async query => {
+    try {
+      setStatus(STATUS.PENDING);
+      const resp = await articlesAPI.fetchArticles(query);
+      setStatus(STATUS.RESOLVED);
+      setArticles(resp);
+      return resp;
+    } catch (error) {
+      setStatus(STATUS.REJECTED);
+      setError(error);
+      throw new Error(`Статей за таким запитом ${query} не знайдено`);
+    }
+  };
+
+  if (status === STATUS.IDLE) {
+    return <p>Введіть назву статті</p>;
+  }
+
+  if (status === STATUS.PENDING) {
+    return <PendingView articleName={articleName} />;
+  }
+
+  if (status === STATUS.RESOLVED) {
+    return <ArticlesList articles={articles} />;
+  }
+
+  if (status === STATUS.REJECTED) {
+    return <ErrorView message={error.message} />;
+  }
+};
+
+export class ArticlesOld extends Component {
   state = {
     articles: [],
-    status: "idle",
+    status: STATUS.IDLE,
     error: null,
   };
 
   componentDidUpdate = async (prevProps, prevState) => {
     if (prevProps.articleName !== this.props.articleName) {
-      fetch(
-        `http://hn.algolia.com/api/v1/sarch?query=${this.props.articleName}`,
-      )
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-
-          return Promise.reject(
-            new Error(`Немає статті з таким іменем ${this.props.articleName}`),
-          );
-
-          // throw new Error(
-          //   `Немає статті з таким іменем ${this.props.articleName}`,
-          // );
-        })
-        .then(data =>
-          this.setState({ articles: data.hits, status: "resolved" }),
-        )
-        .catch(error => this.setState({ error, status: "rejected" }));
-      // await this.fetchArticles(this.props.articleName);
+      this.setState({ status: STATUS.PENDING });
+      try {
+        const resp = await this.fetchArticles(this.props.articleName);
+        this.setState({ articles: resp, status: STATUS.RESOLVED });
+      } catch (error) {
+        this.setState({ error, status: STATUS.REJECTED });
+      }
     }
   };
 
-  fetchArticles = async articleName => {
-    this.setState({ status: "pending" });
+  fetchArticles = async query => {
     try {
-      const resp = await articlesAPI.fetchArticles(articleName);
-      this.setState({ articles: resp, status: "resolved" });
+      const resp = await articlesAPI.fetchArticles(query);
+      return resp.data.hits;
     } catch (error) {
-      this.setState({ error, status: "rejected" });
+      throw new Error(`Статей за такиv запитом ${query} не знайдено`);
     }
   };
 
   render() {
     const { articles, status, error } = this.state;
 
-    if (status === "idle") {
+    if (status === STATUS.IDLE) {
       return <p>Введіть назву статті</p>;
     }
 
-    if (status === "pending") {
+    if (status === STATUS.PENDING) {
       return <PendingView articleName={this.props.articleName} />;
     }
 
-    if (status === "resolved") {
+    if (status === STATUS.RESOLVED) {
       return <ArticlesList articles={articles} />;
     }
 
-    if (status === "rejected") {
+    if (status === STATUS.REJECTED) {
       return <ErrorView message={error.message} />;
     }
   }

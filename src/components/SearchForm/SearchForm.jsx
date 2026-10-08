@@ -2,7 +2,7 @@ import { Component } from "react";
 import { FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-export class SearchForm extends Component {
+export class SearchFormOld extends Component {
   state = {
     articleName: "",
   };
