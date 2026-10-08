@@ -1,8 +1,9 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useReducer } from "react";
 import articlesAPI from "../services/articlesService";
 import { ArticlesList } from "../ArticlesList";
 import { ErrorView } from "../ErrorView";
 import { PendingView } from "../PendingView";
+import axios from "axios";
 
 const STATUS = {
   IDLE: "idle",
@@ -11,10 +12,45 @@ const STATUS = {
   REJECTED: "rejected",
 };
 
+const articlesReducer = (state, action) => {
+  switch (action.type) {
+    case "pendingArticles":
+      return { ...state, status: STATUS.PENDING };
+
+    case "resolvedArticles":
+      return {
+        ...state,
+        articles: action.payload,
+        status: STATUS.RESOLVED,
+      };
+
+    case "rejectedArticles":
+      return { ...state, error: action.payload, status: STATUS.REJECTED };
+
+    default:
+      throw new Error(`Unknown action type ${action.type}`);
+  }
+};
+
+function init(initialState) {
+  return { ...initialState, count: initialState.count + 10 };
+}
+
 export const Articles = ({ articleName }) => {
-  const [articles, setArticles] = useState([]);
-  const [status, setStatus] = useState("idle");
-  const [error, setError] = useState(null);
+  const [state, dispatch] = useReducer(
+    articlesReducer,
+    {
+      status: STATUS.IDLE,
+      articles: [],
+      error: null,
+      count: 0,
+    },
+    init,
+  );
+
+  // const [articles, setArticles] = useState([]);
+  // const [status, setStatus] = useState("idle");
+  // const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => await fetchArticles(articleName);
@@ -28,16 +64,39 @@ export const Articles = ({ articleName }) => {
     }
 
     try {
-      setStatus(STATUS.PENDING);
+      // setStatus(STATUS.PENDING);
+      dispatch({
+        type: "pendingArticles",
+      });
+
       const resp = await articlesAPI.fetchArticles(query);
-      setStatus(STATUS.RESOLVED);
-      setArticles(resp);
+
+      dispatch({
+        type: "resolvedArticles",
+        payload: resp,
+      });
+      // setStatus(STATUS.RESOLVED);
+      // setArticles(resp);
     } catch (error) {
-      setStatus(STATUS.REJECTED);
-      setError(error);
-      throw new Error(`Статей за таким запитом ${query} не знайдено`);
+      // setStatus(STATUS.REJECTED);
+      // setError(error);
+
+      if (axios.isAxiosError(error)) {
+        const newError = new Error(
+          `Статей за таким запитом ${query} не знайдено`,
+        );
+
+        dispatch({
+          type: "rejectedArticles",
+          payload: newError,
+        });
+
+        // throw newError;
+      }
     }
   };
+
+  const { status, error, articles } = state;
 
   if (status === STATUS.IDLE) {
     return <p>Введіть назву статті</p>;
