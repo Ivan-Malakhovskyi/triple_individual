@@ -1,180 +1,189 @@
-# Array destructure
+# useRef
 
-```js
-const state = useState("");
-
-const value = state[0];
-const setValue = state[1];
-const arr = ["Andriy", 20, "dev"];
-
-const [name, age, profession] = arr;
-```
-
-## Custom hooks
+КНОПКА STOP НЕ ПРАЦЮЄ !
 
 ```jsx
-import { useState } from "react";
+const [time, setTime] = useState(() => new Date().toLocaleTimeString());
 
-export const useToggle = ({ initState = false }) => {
-  const [isModalOpen, setIsModalOpen] = useState(initState);
+//   const ref = useRef(null);
 
-  const handleClose = () => setIsModalOpen(false);
-  const handleOpen = () => setIsModalOpen(true);
+let intervalId = null;
 
-  const handleToggle = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  return {
-    isModalOpen,
-    handleToggle,
-    handleOpen,
-    handleClose,
-  };
+const stop = () => {
+  clearInterval(intervalId);
 };
-```
 
-```jsx
-import { useState } from "react";
-import { Modal } from "./Modal";
-
-export const ComponentB = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-
-  const closeModal = () => setIsModalOpen(false);
-
-  return (
-    <>
-      <button onClick={openModal}>Open modal B</button>
-
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h1>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consequatur,
-          id.
-        </h1>
-        <button type="button" onClick={closeModal}>
-          Close modal B
-        </button>
-      </Modal>
-    </>
+useEffect(() => {
+  intervalId = setInterval(
+    () => setTime(new Date().toLocaleTimeString()),
+    1000,
   );
+}, []);
+```
+
+ПОЯСНЕННЯ:
+
+Коли був class це clearInterval був властивістю класу і воно ініціалізувалось
+один раз при створенні екземпляра класа під час виклику. І потім викликався
+метод render()
+
+В Функціях тіло виконується коли змінюється або props або state. IntervalId на
+кожному рендері буде різна
+
+```jsx
+let intervalId = null;
+
+const stop = () => {
+  clearInterval(intervalId);
 };
+
+useEffect(() => {
+  intervalId = setInterval(
+    () => setTime(new Date().toLocaleTimeString()),
+    1000,
+  );
+}, []);
+
+console.log(intervalId); - завжди null
 ```
 
-```jsx
-❌
-const [state, setState] = useState({
-  email: "",
-  password: "",
-});
-```
+ВИКОРИСТОВУЄМО useRef() - і досі нічого не робить
 
-```jsx
-export const Form = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+Приклад з cleanupFunc всередині useEffect
 
-  const handleSubmit = e => {
-    e.preventDefault();
+````jsx
+export const Clock = () => {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString());
 
-    e.target.reset();
+  const intervalId = useRef(null);
+
+  useEffect(() => {
+    console.log(time);
+    // intervalId.current = setInterval(
+    //   () => setTime(new Date().toLocaleTimeString()),
+    //   1000,
+    // );
+
+    return () => {
+      console.log("Функція очистки перед наступним викликом useEffect");
+    };
+  }, [time]);
+
+  const stop = () => {
+    clearInterval(intervalId.current);
   };
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-
-    switch (name) {
-      case "email":
-        setEmail(value);
-        break;
-
-      case "password":
-        setPassword(value);
-
-      default:
-        return;
-    }
-  };
-
+  console.log("🚀 ~ Clock ~ intervalId:", intervalId);
   return (
-    <form
-      autoComplete="off"
-      onSubmit={handleSubmit}
-      style={{ position: "relative" }}
-    >
-      <label>
-        Email:
-        <input
-          name="email"
-          type="email"
-          value={email}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Password:
-        <input
-          name="password"
-          type="password"
-          value={password}
-          onChange={handleChange}
-        />
-      </label>
+    <div>
+      <h1>{time}</h1>
 
-      <button style={{ position: "absolute" }} type="submit">
-        Signup
+      <button
+        type="button"
+        onClick={() => setTime(new Date().toLocaleDateString())}
+      >
+        Update time
       </button>
-    </form>
+      <button type="button" onClick={stop}>
+        Stop time
+      </button>
+    </div>
   );
 };
-```
-
-### Lazy initializations
-
-```js
 
 
-  useEffect(() => {
-    localStorage.setItem("email", JSON.stringify(email));
-  }, [email]);
-  useEffect(() => {
-    localStorage.setItem("password", JSON.stringify(password));
-  }, [password]);
 
 
-Викликає один раз
-    useState(() => {
-      console.log("READ EMAIL");
-      return JSON.parse(localStorage.getItem("email"));
-    }) ?? "";
 
-  const [password, setPassword] =
-    useState(() => {
-      console.log("READ PASSWORD");
-      return JSON.parse(localStorage.getItem("password"));
-    }) ?? "";
+## Old way Context
 
-
-Викликає кожен раз
-
-
- const [password, setPassword] =
-    useState( JSON.parse(localStorage.getItem("password"))) ??
-```
-
-**Reusable hook**
+1. createContext
 
 ```jsx
-const useLocalStorage = (key, initValue = "") => {
-  const [state, setState] =
-    useState(() => JSON.parse(localStorage.getItem(key))) ?? initValue;
+import { createContext } from "react";
 
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(state));
-  }, [state, key]);
+export default createContext();
+````
 
-  return [state, setState];
+2. Create Provider
+
+```jsx
+import React, { useMemo, useState } from "react";
+import avatar from "@/assets/react.svg";
+import authContext from "./context";
+
+const Provider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const login = () => {
+    setUser({ name: "User", avatar });
+    setIsLoggedIn(true);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
+  const providerValue = useMemo(() => {
+    return { user, isLoggedIn, login, logout };
+  }, [user, isLoggedIn]);
+
+  return (
+    <authContext.Provider value={providerValue}>
+      {children}
+    </authContext.Provider>
+  );
 };
+
+export default Provider;
+```
+
+3. Wrap App
+
+```jsx
+<AuthProvider>
+  <App />
+</AuthProvider>
+```
+
+4. Use
+
+```jsx
+<authContext.Consumer>
+  {({ isLoggedIn, user, login, logout }) => {
+    return (
+      <header className={styles.header}>
+        <Nav />
+        {!isLoggedIn ? (
+          <button type="button" onClick={login}>
+            Login
+          </button>
+        ) : (
+          <UserMenu user={user} onLogout={logout} />
+        )}
+      </header>
+    );
+  }}
+</authContext.Consumer>
+```
+
+### Modern way in class Component
+
+```jsx
+
+  const { isLoggedIn, user, login, logout } = useContext(authContext);
+
+  return (
+    <header className={styles.header}>
+      <Nav />
+      {!isLoggedIn ? (
+        <button type="button" onClick={login}>
+          Login
+        </button>
+      ) : (
+        <UserMenu user={user} onLogout={logout} />
+      )}
+    </header>
 ```
