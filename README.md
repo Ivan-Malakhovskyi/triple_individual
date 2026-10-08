@@ -1,3 +1,1 @@
-Тема 18. useRef(), useContext()
-
-1. useRef, useContext
+Тема 19. useMemo(), useCallback(), useReducer
