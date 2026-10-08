@@ -4,7 +4,8 @@ import styles from "./Nav.module.css";
 
 const navRoutes = [
   { id: crypto.randomUUID(), path: "", title: "Home" },
-  { id: crypto.randomUUID(), path: "counter", title: "Лічильник" },
+  { id: crypto.randomUUID(), path: "counter", title: "useReducer" },
+  { id: crypto.randomUUID(), path: "friends", title: "useMemo" },
 ];
 
 export const Nav = () => {
