@@ -1,4 +1,4 @@
-import { Component, useState } from "react";
+import { Component } from "react";
 import { Modal } from "./Modal";
 
 export class ComponentA extends Component {
