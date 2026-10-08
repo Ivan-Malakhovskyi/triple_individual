@@ -23,12 +23,15 @@ export const Articles = ({ articleName }) => {
   }, [articleName]);
 
   const fetchArticles = async query => {
+    if (!query) {
+      return;
+    }
+
     try {
       setStatus(STATUS.PENDING);
       const resp = await articlesAPI.fetchArticles(query);
       setStatus(STATUS.RESOLVED);
       setArticles(resp);
-      return resp;
     } catch (error) {
       setStatus(STATUS.REJECTED);
       setError(error);
