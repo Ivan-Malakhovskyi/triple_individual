@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import avatar from "@/assets/react.svg";
 import authContext from "./context";
 
-const Provider = ({ children }) => {
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -27,4 +27,4 @@ const Provider = ({ children }) => {
   );
 };
 
-export default Provider;
+export default AuthProvider;

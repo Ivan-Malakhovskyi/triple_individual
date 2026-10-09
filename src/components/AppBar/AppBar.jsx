@@ -1,5 +1,5 @@
 import React from "react";
-import { Nav } from "../Nav/Nav";
+import Nav from "../Nav/Nav";
 import authContext from "../context/auth/context";
 import styles from "./AppBar.module.css";
 import { UserMenu } from "../UserMenu/UserMenu";
