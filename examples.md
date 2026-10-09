@@ -1,401 +1,180 @@
-Припустимо, що вже є дерево компонентів, яке має кілька рівнів ієрархії, і
-необхідно отримати колекцію елементів від API. Який саме компонент в ієрархії
-повинен відповідати за HTTP-запити і зберігання результату відповіді? Якщо не
-використовуємо бібліотеку управління станом, то це залежить від трьох критеріїв.
-
-Яким компонентам будуть необхідні отримані дані? Де буде рендеритися індикатор
-завантаження, доки виконується HTTP-запит? Де буде рендеритися повідомлення у
-разі помилки HTTP-запиту?
-
-# PART 1 ==============================================================
-
-1.  СПОЧАТКУ ПИШЕМО ВСЕ В ОДНОМУ ФАЙЛІ
+# Array destructure
 
 ```js
-import axios from "axios";
+const state = useState("");
 
-axios.defaults.baseURL = "http://hn.algolia.com/api/v1";
+const value = state[0];
+const setValue = state[1];
+const arr = ["Andriy", 20, "dev"];
 
-export const fetchArticles = async () => {
-  const resp = await axios.get("/search?query=react");
-  return resp.data;
+const [name, age, profession] = arr;
+```
+
+## Custom hooks
+
+```jsx
+import { useState } from "react";
+
+export const useToggle = ({ initState = false }) => {
+  const [isModalOpen, setIsModalOpen] = useState(initState);
+
+  const handleClose = () => setIsModalOpen(false);
+  const handleOpen = () => setIsModalOpen(true);
+
+  const handleToggle = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  return {
+    isModalOpen,
+    handleToggle,
+    handleOpen,
+    handleClose,
+  };
 };
 ```
 
 ```jsx
-import React, { Component } from "react";
-import { ArticlesList } from "./components/ArticlesList";
-import { fetchArticles } from "./components/services/articlesService";
-import { Spinner } from "./components/Spinner";
+import { useState } from "react";
+import { Modal } from "./Modal";
 
-export class App extends Component {
-  state = {
-    articles: [],
-    isLoading: false,
-    error: null,
-  };
+export const ComponentB = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  async componentDidMount() {
-    this.setState({ isLoading: true });
-    const resp = await fetchArticles();
-    this.setState({ articles: resp.hits, isLoading: false });
-  }
+  const openModal = () => setIsModalOpen(true);
 
-  render() {
-    const { articles, isLoading, error } = this.state;
+  const closeModal = () => setIsModalOpen(false);
 
-    return (
-      <section>
-        {isLoading && <Spinner width={80} height={80} />}
-        <ArticlesList articles={articles} />
-      </section>
-    );
-  }
-}
-```
-
-## PART 2 ==================================================
-
-```jsx
-handleSubmit = e => {
-  e.preventDefault();
-
-  // this.props.onSubmit(this.state.articleName);
-  this.setState({ articleName: "" });
-};
-```
-
-2. СТВОРИТИ В APP метод і прокинути його
-
-```jsx
-handleSearchArticle = articleName => {
-  console.log(articleName);
-};
-```
-
-ЩОб отримати доступ до даних з інпута в App потрібно його десь зберегти
-
-```js
-state = {
-  articleName: "",
-};
-
-handleSearchArticle = articleName => {
-  this.setState({ articleName });
-};
-```
-
-3. ПОКАЗАТИ В REACT DEV TOOLS
-
-Додаємо перевірку на ""
-
-```jsx
-if (this.state.articleName.trim() === "") {
-  alert("Пустий пошук");
-  return;
-}
-```
-
-4. React-toastify
-
-https://fkhadra.github.io/react-toastify/introduction/
-
-```jsx
-handleSubmit = e => {
-  e.preventDefault();
-
-  if (this.state.articleName.trim() === "") {
-    toast("Введіть назву статті", {
-      type: "error",
-    });
-    return;
-  }
-
-  this.props.onSubmit(this.state.articleName);
-  this.setState({ articleName: "" });
-};
-```
-
-```jsx
-<Articles articles={articleName} />
-```
-
-SearchForm => App => Articles
-
-5. Де робити http запит => в Articles
-
-Коли компонент робить rerender? Коли змінюється пропс articles => http request
-
-```js
-componentDidUpdate = (prevProps, prevState) => {};
-```
-
-```jsx
-import React, { Component } from "react";
-import { fetchArticles } from "../services/articlesService";
-import { ArticlesList } from "../ArticlesList";
-
-export class Articles extends Component {
-  state = {
-    articles: [],
-  };
-
-  componentDidUpdate = (prevProps, prevState) => {
-    const prevName = prevProps.articleName;
-    const currentName = this.props.articleName;
-
-    if (prevName !== currentName) {
-      console.log("RERENDER ");
-
-      this.fetchData(currentName);
-    }
-  };
-
-  fetchData = async name => {
-    try {
-      const resp = await fetchArticles(name);
-
-      this.setState({ articles: resp });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  render() {
-    cp - shortcut;
-    cs - shortcut;
-    return (
-      <div>
-        <h1>Article Info</h1>
-        {this.state.isLoading && <Spinner />}
-        {!this.props.articleName && <p>Введіть ім'я статті</p>}
-        {this.state.articles.length > 0 && (
-          <ArticlesList articles={this.state.articles} />
-        )}
-      </div>
-    );
-  }
-}
-```
-
-6. Error handling
-
-```jsx
-fetchData = async name => {
-  this.setState({ isLoading: true });
-  try {
-    const resp = await fetchArticles(name);
-
-    this.setState({ articles: resp });
-  } catch (error) {
-    this.setState({ error });
-  } finally {
-    this.setState({ isLoading: false });
-  }
-};
-
-{
-  this.state.error && (
-    <h1>
-      Щось пішло не так, схожих статей з ім'ям{" "}
-      <span style={{ textDecoration: "underline" }}>
-        {this.props.articleName}
-      </span>{" "}
-      не знайдено
-    </h1>
-  );
-}
-```
-
-Ховати старий контен
-
-### PART 3 STATE MACHINE
-
-**Before state machine**
-
-```jsx
-import React, { Component } from "react";
-import { fetchArticles } from "../services/articlesService";
-import { ArticlesList } from "../ArticlesList";
-import { Spinner } from "../Spinner";
-
-export class Articles extends Component {
-  state = {
-    articles: [],
-    isLoading: false,
-    error: null,
-  };
-
-  componentDidUpdate = (prevProps, prevState) => {
-    const prevName = prevProps.articleName;
-    const currentName = this.props.articleName;
-
-    if (prevName !== currentName) {
-      console.log("RERENDER ");
-
-      this.fetchData(currentName);
-    }
-  };
-
-  fetchData = async name => {
-    this.setState({ isLoading: true, articles: [] });
-    try {
-      const resp = await fetchArticles(name);
-
-      this.setState({ articles: resp });
-    } catch (error) {
-      this.setState({ error });
-    } finally {
-      this.setState({ isLoading: false });
-    }
-  };
-
-  render() {
-    return (
-      <div>
-        <h1>Articles</h1>
-        {this.state.error && (
-          <h1>
-            Щось пішло не так, схожих статей з ім'ям{" "}
-            <span style={{ textDecoration: "underline" }}>
-              {this.props.articleName}
-            </span>{" "}
-            не знайдено
-          </h1>
-        )}
-        {this.state.isLoading && <Spinner />}
-        {!this.props.articleName && <p>Введіть ім'я статті</p>}
-        {this.state.articles.length > 0 && (
-          <ArticlesList articles={this.state.articles} />
-        )}
-      </div>
-    );
-  }
-}
-```
-
-**After**
-
-```js
-if (status === "idle") {
-  return <p>Введіть ім'я статті</p>;
-}
-
-if (status === "pending") {
-  return <Spinner />;
-}
-
-if (status === "rejected") {
   return (
-    <h1>
-      Щось пішло не так, схожих статей з ім'ям{" "}
-      <span style={{ textDecoration: "underline" }}>
-        {this.props.articleName}
-      </span>{" "}
-      не знайдено
-    </h1>
-  );
-}
+    <>
+      <button onClick={openModal}>Open modal B</button>
 
-if (status === "resolved") {
-  return <ArticlesList articles={this.state.articles} />;
-}
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <h1>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consequatur,
+          id.
+        </h1>
+        <button type="button" onClick={closeModal}>
+          Close modal B
+        </button>
+      </Modal>
+    </>
+  );
+};
 ```
+
+```jsx
+❌
+const [state, setState] = useState({
+  email: "",
+  password: "",
+});
+```
+
+```jsx
+export const Form = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = e => {
+    e.preventDefault();
+
+    e.target.reset();
+  };
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+
+    switch (name) {
+      case "email":
+        setEmail(value);
+        break;
+
+      case "password":
+        setPassword(value);
+
+      default:
+        return;
+    }
+  };
+
+  return (
+    <form
+      autoComplete="off"
+      onSubmit={handleSubmit}
+      style={{ position: "relative" }}
+    >
+      <label>
+        Email:
+        <input
+          name="email"
+          type="email"
+          value={email}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Password:
+        <input
+          name="password"
+          type="password"
+          value={password}
+          onChange={handleChange}
+        />
+      </label>
+
+      <button style={{ position: "absolute" }} type="submit">
+        Signup
+      </button>
+    </form>
+  );
+};
+```
+
+### Lazy initializations
 
 ```js
-BEFORE;
-fetchData = async name => {
-  this.setState({ isLoading: true, articles: [] });
-  try {
-    const resp = await fetchArticles(name);
 
-    this.setState({ articles: resp });
-  } catch (error) {
-    this.setState({ error });
-  } finally {
-    this.setState({ isLoading: false });
-  }
-};
 
-AFTER;
+  useEffect(() => {
+    localStorage.setItem("email", JSON.stringify(email));
+  }, [email]);
+  useEffect(() => {
+    localStorage.setItem("password", JSON.stringify(password));
+  }, [password]);
 
-fetchData = async name => {
-  this.setState({ status: "pending" });
-  try {
-    const resp = await fetchArticles(name);
 
-    this.setState({ articles: resp, status: "resolved" });
-  } catch (error) {
-    this.setState({ error, status: "rejected" });
-  }
-};
+Викликає один раз
+    useState(() => {
+      console.log("READ EMAIL");
+      return JSON.parse(localStorage.getItem("email"));
+    }) ?? "";
+
+  const [password, setPassword] =
+    useState(() => {
+      console.log("READ PASSWORD");
+      return JSON.parse(localStorage.getItem("password"));
+    }) ?? "";
+
+
+Викликає кожен раз
+
+
+ const [password, setPassword] =
+    useState( JSON.parse(localStorage.getItem("password"))) ??
 ```
 
-```jsx
-
-Articles.jsx
-
-  render() {
-    const { status, error } = this.state;
-
-    if (status === "idle") {
-      return <p>Введіть ім'я статті</p>;
-    }
-
-    if (status === "pending") {
-      return <PendingView articleName={this.props.articleName} />;
-    }
-
-    if (status === "rejected") {
-      return <ErrorView message="Щось пішло не так" />;
-    }
-
-    if (status === "resolved") {
-      return <ArticlesList articles={this.state.articles} />;
-    }
-  }
-```
+**Reusable hook**
 
 ```jsx
-import React, { Component } from "react";
-import { ToastContainer } from "react-toastify";
-import { Spinner } from "./components/Spinner";
-import { SearchForm } from "./components/SearchForm";
-import { Articles } from "./components/Articles";
+const useLocalStorage = (key, initValue = "") => {
+  const [state, setState] =
+    useState(() => JSON.parse(localStorage.getItem(key))) ?? initValue;
 
-export class App extends Component {
-  state = {
-    articles: [],
-    isLoading: false,
-    isError: null,
-    articleName: "",
-  };
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(state));
+  }, [state, key]);
 
-  handleSearchArticle = articleName => {
-    this.setState({ articleName });
-  };
-
-  componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps.articleInfo !== this.props.articleInfo) {
-      console.log("RERENDER");
-    }
-  };
-
-  render() {
-    const { isLoading, error, articleName } = this.state;
-
-    return (
-      <section>
-        {isLoading && <Spinner width={80} height={80} />}
-        {error && <h1>Щось пішло не так 😢</h1>}
-
-        <SearchForm onSubmit={this.handleSearchArticle} />
-
-        <Articles articleName={articleName} />
-
-        <ToastContainer autoClose={3000} />
-      </section>
-    );
-  }
-}
+  return [state, setState];
+};
 ```
