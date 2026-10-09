@@ -5,8 +5,9 @@ export const TestEffect = () => {
   const [value, setValue] = useState("");
 
   useEffect(() => {
-    console.log("EFFECT");
-  }, []);
+    console.log(count);
+    // debugger;
+  }, [count]);
 
   const handleClick = () => {
     setCount(prev => prev + 1);
