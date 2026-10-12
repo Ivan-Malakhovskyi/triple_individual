@@ -145,3 +145,35 @@ const useLocalStorage = (key, initValue = "") => {
   return [state, setState];
 };
 ```
+
+COLOR PICKER
+
+```jsx
+export default function ColorPickerUpdated({ options }) {
+  const [activeOptionIdx, setActiveOptionIdx] = useState(0);
+
+  const makeOptionClassName = index => {
+    return index === activeOptionIdx ? styles.activeOption : styles.option;
+  };
+
+  const { label } = options[activeOptionIdx];
+
+  return (
+    <div className={styles.container}>
+      <h2 className={styles.title}>Color Picker</h2>
+      <p>Вибраний колір: {label}</p>
+      <div>
+        {options.map(({ label, color }, index) => (
+          <button
+            key={label}
+            aria-label={label}
+            className={makeOptionClassName(index)}
+            style={{ backgroundColor: color }}
+            onClick={() => setActiveOptionIdx(index)}
+          ></button>
+        ))}
+      </div>
+    </div>
+  );
+}
+```

@@ -1,0 +1,14 @@
+.nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+
+    & .active {
+        color: #2977eb;
+    }
+
+    &>a {
+        color: #000;
+        font-weight: 600;
+    }
+}
