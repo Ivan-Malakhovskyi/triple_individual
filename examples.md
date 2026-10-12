@@ -1,133 +1,100 @@
-# Array destructure
-
-```js
-const state = useState("");
-
-const value = state[0];
-const setValue = state[1];
-const arr = ["Andriy", 20, "dev"];
-
-const [name, age, profession] = arr;
-```
-
-## Custom hooks
-
 ```jsx
-import { useState } from "react";
-
-export const useToggle = ({ initState = false }) => {
-  const [isModalOpen, setIsModalOpen] = useState(initState);
-
-  const handleClose = () => setIsModalOpen(false);
-  const handleOpen = () => setIsModalOpen(true);
-
-  const handleToggle = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  return {
-    isModalOpen,
-    handleToggle,
-    handleOpen,
-    handleClose,
-  };
-};
-```
-
-```jsx
-import { useState } from "react";
-import { Modal } from "./Modal";
-
-export const ComponentB = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-
-  const closeModal = () => setIsModalOpen(false);
+export const App = () => {
+  const [articleName, setArticleName] = useState("");
 
   return (
-    <>
-      <button onClick={openModal}>Open modal B</button>
+    <section>
+      <h1>Http request</h1>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h1>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consequatur,
-          id.
-        </h1>
-        <button type="button" onClick={closeModal}>
-          Close modal B
-        </button>
-      </Modal>
-    </>
+      <SearchForm onSubmit={setArticleName} />
+      <Articles articleName={articleName} />
+
+      <ToastContainer autoClose={3000} />
+    </section>
   );
 };
 ```
 
 ```jsx
-❌
-const [state, setState] = useState({
-  email: "",
-  password: "",
-});
-```
+export const SearchForm = ({ onSubmit }) => {
+  const [articleName, setArticleName] = useState("");
 
-```jsx
-export const Form = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const handleNameChange = e => {
+    setArticleName(e.currentTarget.value.toLowerCase());
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    e.target.reset();
-  };
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-
-    switch (name) {
-      case "email":
-        setEmail(value);
-        break;
-
-      case "password":
-        setPassword(value);
-
-      default:
-        return;
+    if (articleName.trim() === "") {
+      toast("Введіть назву статті", {
+        position: "top-right",
+        type: "error",
+      });
+      return;
     }
+
+    onSubmit(articleName);
+    setArticleName("");
   };
 
   return (
-    <form
-      autoComplete="off"
-      onSubmit={handleSubmit}
-      style={{ position: "relative" }}
-    >
-      <label>
-        Email:
-        <input
-          name="email"
-          type="email"
-          value={email}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Password:
-        <input
-          name="password"
-          type="password"
-          value={password}
-          onChange={handleChange}
-        />
-      </label>
-
-      <button style={{ position: "absolute" }} type="submit">
-        Signup
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="articleName"
+        value={articleName}
+        onChange={handleNameChange}
+      />
+      <button type="submit">
+        <FaSearch /> Search
       </button>
     </form>
   );
+};
+```
+
+```jsx
+export const Articles = ({ articleName }) => {
+  const [articles, setArticles] = useState([]);
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => await fetchArticles(articleName);
+
+    fetchData();
+  }, [articleName]);
+
+  const fetchArticles = async query => {
+    try {
+      setStatus(STATUS.PENDING);
+      const resp = await articlesAPI.fetchArticles(query);
+      setStatus(STATUS.RESOLVED);
+      setArticles(resp);
+      return resp;
+    } catch (error) {
+      setStatus(STATUS.REJECTED);
+      setError(error);
+      throw new Error(`Статей за таким запитом ${query} не знайдено`);
+    }
+  };
+
+  if (status === STATUS.IDLE) {
+    return <p>Введіть назву статті</p>;
+  }
+
+  if (status === STATUS.PENDING) {
+    return <PendingView articleName={articleName} />;
+  }
+
+  if (status === STATUS.RESOLVED) {
+    return <ArticlesList articles={articles} />;
+  }
+
+  if (status === STATUS.REJECTED) {
+    return <ErrorView message={error.message} />;
+  }
 };
 ```
 
@@ -177,4 +144,36 @@ const useLocalStorage = (key, initValue = "") => {
 
   return [state, setState];
 };
+```
+
+COLOR PICKER
+
+```jsx
+export default function ColorPickerUpdated({ options }) {
+  const [activeOptionIdx, setActiveOptionIdx] = useState(0);
+
+  const makeOptionClassName = index => {
+    return index === activeOptionIdx ? styles.activeOption : styles.option;
+  };
+
+  const { label } = options[activeOptionIdx];
+
+  return (
+    <div className={styles.container}>
+      <h2 className={styles.title}>Color Picker</h2>
+      <p>Вибраний колір: {label}</p>
+      <div>
+        {options.map(({ label, color }, index) => (
+          <button
+            key={label}
+            aria-label={label}
+            className={makeOptionClassName(index)}
+            style={{ backgroundColor: color }}
+            onClick={() => setActiveOptionIdx(index)}
+          ></button>
+        ))}
+      </div>
+    </div>
+  );
+}
 ```

@@ -5,8 +5,7 @@ import styles from "./Nav.module.css";
 const navRoutes = [
   { id: crypto.randomUUID(), path: "", title: "Home" },
   { id: crypto.randomUUID(), path: "form", title: "Form" },
-  { id: crypto.randomUUID(), path: "modal", title: "Модалка" },
-  { id: crypto.randomUUID(), path: "effect", title: "Ефект" },
+  { id: crypto.randomUUID(), path: "colorpicker", title: "Зміна кольору" },
 ];
 
 export const Nav = () => {

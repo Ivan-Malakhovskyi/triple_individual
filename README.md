@@ -1,19 +1,8 @@
-1. Провести кахут на зріз знань
+1. Refactor App
+2. Refactor SearchForm
+3. Refactor Articles
+4.
 
-- (Kahoot)[https://create.kahoot.it/details/ae1e08b3-7b88-4daf-aa8b-6d3680233edd]
+Завнтаження контенту не більше 16ms = 60 fps
 
-- (Кахут по
-  темі)[https://create.kahoot.it/details/87d77a9e-c4b8-4a00-b941-0499419339b9]
-
-2. Array destructure
-
-3. useState(), useEffect()
-
-4. Hooks in react dev tools
-
-5. Custom hooks
-
-6. Не можна зберігати об'єкти , бо setState пезатре попередні дані
-
-7. Lazy initializations state - коли початковий стан залежить від якихось
-   обчислень () => {}
+чому так 1000/60 = 16.666 = 1 кадр
