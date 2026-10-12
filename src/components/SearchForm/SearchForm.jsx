@@ -7,6 +7,19 @@ export class SearchForm extends Component {
     articleName: "",
   };
 
+  componentDidMount() {
+    const query = localStorage.getItem("query");
+    if (query !== null) {
+      this.setState({ articleName: JSON.parse(query) });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.articleName !== this.state.articleName) {
+      localStorage.setItem("query", JSON.stringify(this.state.articleName));
+    }
+  }
+
   handleNameChange = e => {
     this.setState({
       articleName: e.currentTarget.value.toLowerCase(),
@@ -25,7 +38,7 @@ export class SearchForm extends Component {
     }
 
     this.props.onSubmit(this.state.articleName);
-    this.setState({ articleName: "" });
+    // this.setState({ articleName: "" });
   };
 
   render() {

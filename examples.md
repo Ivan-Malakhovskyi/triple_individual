@@ -97,3 +97,51 @@ export const Articles = ({ articleName }) => {
   }
 };
 ```
+
+### Lazy initializations
+
+```js
+
+
+  useEffect(() => {
+    localStorage.setItem("email", JSON.stringify(email));
+  }, [email]);
+  useEffect(() => {
+    localStorage.setItem("password", JSON.stringify(password));
+  }, [password]);
+
+
+Викликає один раз
+    useState(() => {
+      console.log("READ EMAIL");
+      return JSON.parse(localStorage.getItem("email"));
+    }) ?? "";
+
+  const [password, setPassword] =
+    useState(() => {
+      console.log("READ PASSWORD");
+      return JSON.parse(localStorage.getItem("password"));
+    }) ?? "";
+
+
+Викликає кожен раз
+
+
+ const [password, setPassword] =
+    useState( JSON.parse(localStorage.getItem("password"))) ??
+```
+
+**Reusable hook**
+
+```jsx
+const useLocalStorage = (key, initValue = "") => {
+  const [state, setState] =
+    useState(() => JSON.parse(localStorage.getItem(key))) ?? initValue;
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(state));
+  }, [state, key]);
+
+  return [state, setState];
+};
+```
