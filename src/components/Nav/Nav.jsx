@@ -1,12 +1,8 @@
-import Reac, { memo } from "react";
 import { NavLink } from "react-router";
 import styles from "./Nav.module.css";
 
 const navRoutes = [
   { id: crypto.randomUUID(), path: "", title: "Home" },
-  { id: crypto.randomUUID(), path: "form", title: "Форма" },
-  { id: crypto.randomUUID(), path: "modal", title: "Модалка" },
-  { id: crypto.randomUUID(), path: "effect", title: "Ефект" },
   { id: crypto.randomUUID(), path: "clock", title: "Годинник" },
 ];
 
@@ -27,4 +23,5 @@ const Nav = () => {
   );
 };
 
-export default memo(Nav);
+export default Nav;
+// export default memo(Nav);
