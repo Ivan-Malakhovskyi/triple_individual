@@ -1,6 +1,7 @@
 1. Refactor App
 2. Refactor SearchForm
 3. Refactor Articles
+4.
 
 Завнтаження контенту не більше 16ms = 60 fps
 
