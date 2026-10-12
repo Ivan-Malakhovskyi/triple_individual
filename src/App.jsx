@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { ToastContainer } from "react-toastify";
-import { SearchForm } from "./components/SearchForm";
-import { Articles } from "./components/Articles";
 import { Route, Routes } from "react-router";
+import { ToastContainer } from "react-toastify";
+import { SearchForm } from "./components/SearchForm/SearchForm";
+import { Articles } from "./components/Articles/Articles";
 import { Layout } from "./components/Layout/Layout";
 import ColorPicker from "./components/ColorPicker/ColorPicker";
 import { colorPickerOptions } from "./components/constants/colors";

@@ -1,9 +1,9 @@
 import { Component } from "react";
 import articlesAPI from "@/components/services/articlesService";
 import { STATUS } from "../constants/httpStatuses";
-import { PendingView } from "../PendingView";
-import { ArticlesList } from "../ArticlesList";
-import { ErrorView } from "../ErrorView";
+import { PendingView } from "../PendingView/PendingView";
+import { ArticlesList } from "../ArticlesList/ArticlesList";
+import { ErrorView } from "../ErrorView/ErrorView";
 
 export class Articles extends Component {
   state = {
