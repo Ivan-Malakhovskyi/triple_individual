@@ -1,179 +1,224 @@
+# useRef
+
+КНОПКА STOP НЕ ПРАЦЮЄ !
+
 ```jsx
-export const App = () => {
-  const [articleName, setArticleName] = useState("");
+const [time, setTime] = useState(() => new Date().toLocaleTimeString());
 
-  return (
-    <section>
-      <h1>Http request</h1>
+//   const ref = useRef(null);
 
-      <SearchForm onSubmit={setArticleName} />
-      <Articles articleName={articleName} />
+let intervalId = null;
 
-      <ToastContainer autoClose={3000} />
-    </section>
-  );
+const stop = () => {
+  clearInterval(intervalId);
 };
+
+useEffect(() => {
+  intervalId = setInterval(
+    () => setTime(new Date().toLocaleTimeString()),
+    1000,
+  );
+}, []);
 ```
 
+ПОЯСНЕННЯ:
+
+Коли був class це clearInterval був властивістю класу і воно ініціалізувалось
+один раз при створенні екземпляра класа під час виклику. І потім викликався
+метод render()
+
+В Функціях тіло виконується коли змінюється або props або state. IntervalId на
+кожному рендері буде різна
+
 ```jsx
-export const SearchForm = ({ onSubmit }) => {
-  const [articleName, setArticleName] = useState("");
+let intervalId = null;
 
-  const handleNameChange = e => {
-    setArticleName(e.currentTarget.value.toLowerCase());
+const stop = () => {
+  clearInterval(intervalId);
+};
+
+useEffect(() => {
+  intervalId = setInterval(
+    () => setTime(new Date().toLocaleTimeString()),
+    1000,
+  );
+}, []);
+
+console.log(intervalId); - завжди null
+```
+
+ВИКОРИСТОВУЄМО useRef() - і досі нічого не робить
+
+Приклад з cleanupFunc всередині useEffect
+
+````jsx
+export const Clock = () => {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString());
+
+  const intervalId = useRef(null);
+
+  useEffect(() => {
+    console.log(time);
+    // intervalId.current = setInterval(
+    //   () => setTime(new Date().toLocaleTimeString()),
+    //   1000,
+    // );
+
+    return () => {
+      console.log("Функція очистки перед наступним викликом useEffect");
+    };
+  }, [time]);
+
+  const stop = () => {
+    clearInterval(intervalId.current);
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-
-    if (articleName.trim() === "") {
-      toast("Введіть назву статті", {
-        position: "top-right",
-        type: "error",
-      });
-      return;
-    }
-
-    onSubmit(articleName);
-    setArticleName("");
-  };
-
+  console.log("🚀 ~ Clock ~ intervalId:", intervalId);
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="articleName"
-        value={articleName}
-        onChange={handleNameChange}
-      />
-      <button type="submit">
-        <FaSearch /> Search
+    <div>
+      <h1>{time}</h1>
+
+      <button
+        type="button"
+        onClick={() => setTime(new Date().toLocaleDateString())}
+      >
+        Update time
       </button>
-    </form>
-  );
-};
-```
-
-```jsx
-export const Articles = ({ articleName }) => {
-  const [articles, setArticles] = useState([]);
-  const [status, setStatus] = useState("idle");
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => await fetchArticles(articleName);
-
-    fetchData();
-  }, [articleName]);
-
-  const fetchArticles = async query => {
-    try {
-      setStatus(STATUS.PENDING);
-      const resp = await articlesAPI.fetchArticles(query);
-      setStatus(STATUS.RESOLVED);
-      setArticles(resp);
-      return resp;
-    } catch (error) {
-      setStatus(STATUS.REJECTED);
-      setError(error);
-      throw new Error(`Статей за таким запитом ${query} не знайдено`);
-    }
-  };
-
-  if (status === STATUS.IDLE) {
-    return <p>Введіть назву статті</p>;
-  }
-
-  if (status === STATUS.PENDING) {
-    return <PendingView articleName={articleName} />;
-  }
-
-  if (status === STATUS.RESOLVED) {
-    return <ArticlesList articles={articles} />;
-  }
-
-  if (status === STATUS.REJECTED) {
-    return <ErrorView message={error.message} />;
-  }
-};
-```
-
-### Lazy initializations
-
-```js
-
-
-  useEffect(() => {
-    localStorage.setItem("email", JSON.stringify(email));
-  }, [email]);
-  useEffect(() => {
-    localStorage.setItem("password", JSON.stringify(password));
-  }, [password]);
-
-
-Викликає один раз
-    useState(() => {
-      console.log("READ EMAIL");
-      return JSON.parse(localStorage.getItem("email"));
-    }) ?? "";
-
-  const [password, setPassword] =
-    useState(() => {
-      console.log("READ PASSWORD");
-      return JSON.parse(localStorage.getItem("password"));
-    }) ?? "";
-
-
-Викликає кожен раз
-
-
- const [password, setPassword] =
-    useState( JSON.parse(localStorage.getItem("password"))) ??
-```
-
-**Reusable hook**
-
-```jsx
-const useLocalStorage = (key, initValue = "") => {
-  const [state, setState] =
-    useState(() => JSON.parse(localStorage.getItem(key))) ?? initValue;
-
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(state));
-  }, [state, key]);
-
-  return [state, setState];
-};
-```
-
-COLOR PICKER
-
-```jsx
-export default function ColorPickerUpdated({ options }) {
-  const [activeOptionIdx, setActiveOptionIdx] = useState(0);
-
-  const makeOptionClassName = index => {
-    return index === activeOptionIdx ? styles.activeOption : styles.option;
-  };
-
-  const { label } = options[activeOptionIdx];
-
-  return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Color Picker</h2>
-      <p>Вибраний колір: {label}</p>
-      <div>
-        {options.map(({ label, color }, index) => (
-          <button
-            key={label}
-            aria-label={label}
-            className={makeOptionClassName(index)}
-            style={{ backgroundColor: color }}
-            onClick={() => setActiveOptionIdx(index)}
-          ></button>
-        ))}
-      </div>
+      <button type="button" onClick={stop}>
+        Stop time
+      </button>
     </div>
   );
-}
+};
+
+
+
+
+
+## Old way Context
+
+1. createContext
+
+```jsx
+import { createContext } from "react";
+
+export default createContext();
+````
+
+2. Create Provider
+
+```jsx
+import React, { useMemo, useState } from "react";
+import avatar from "@/assets/react.svg";
+import authContext from "./context";
+
+const Provider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const login = () => {
+    setUser({ name: "User", avatar });
+    setIsLoggedIn(true);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
+  const providerValue = useMemo(() => {
+    return { user, isLoggedIn, login, logout };
+  }, [user, isLoggedIn]);
+
+  return (
+    <authContext.Provider value={providerValue}>
+      {children}
+    </authContext.Provider>
+  );
+};
+
+export default Provider;
+```
+
+3. Wrap App
+
+```jsx
+<AuthProvider>
+  <App />
+</AuthProvider>
+```
+
+4. Use
+
+```jsx
+AuthProvider;
+
+import React, { useMemo, useState } from "react";
+import avatar from "@/assets/react.svg";
+import authContext from "./context";
+
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const login = () => {
+    setUser({ name: "User", avatar });
+    setIsLoggedIn(true);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
+  const providerValue = useMemo(() => {
+    return { user, isLoggedIn, login, logout };
+  }, [user, isLoggedIn]);
+
+  return (
+    <authContext.Provider value={providerValue}>
+      {children}
+    </authContext.Provider>
+  );
+};
+
+export default AuthProvider;
+```
+
+```jsx
+<authContext.Consumer>
+  {({ isLoggedIn, user, login, logout }) => {
+    return (
+      <header className={styles.header}>
+        <Nav />
+        {!isLoggedIn ? (
+          <button type="button" onClick={login}>
+            Login
+          </button>
+        ) : (
+          <UserMenu user={user} onLogout={logout} />
+        )}
+      </header>
+    );
+  }}
+</authContext.Consumer>
+```
+
+### Modern way in class Component
+
+```jsx
+
+  const { isLoggedIn, user, login, logout } = useContext(authContext);
+
+  return (
+    <header className={styles.header}>
+      <Nav />
+      {!isLoggedIn ? (
+        <button type="button" onClick={login}>
+          Login
+        </button>
+      ) : (
+        <UserMenu user={user} onLogout={logout} />
+      )}
+    </header>
 ```
