@@ -15,3 +15,7 @@ export default memo(Nav);
 # useEffect vs useLayoutEffect
 
 **useEffect** - side effects; **useLayoutEffect** - change dom node directly
+
+Завнтаження контенту не більше 16ms = 60 fps
+
+чому так 1000/60 = 16.666 = 1 кадр

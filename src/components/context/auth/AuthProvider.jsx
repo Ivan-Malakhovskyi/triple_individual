@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import authProvider from "./context";
 import avatar from "@/assets/react.svg";
-import authContext from "./context";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const login = () => {
-    setUser({ name: "User", avatar });
+    setUser({ name: "Andriy", avatar });
     setIsLoggedIn(true);
   };
 
@@ -16,14 +16,17 @@ const AuthProvider = ({ children }) => {
     setIsLoggedIn(false);
   };
 
-  const providerValue = useMemo(() => {
-    return { user, isLoggedIn, login, logout };
-  }, [user, isLoggedIn]);
+  const providerValue = {
+    login,
+    logout,
+    isLoggedIn,
+    user,
+  };
 
   return (
-    <authContext.Provider value={providerValue}>
+    <authProvider.Provider value={providerValue}>
       {children}
-    </authContext.Provider>
+    </authProvider.Provider>
   );
 };
 

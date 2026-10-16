@@ -1,5 +1,6 @@
 import { NavLink } from "react-router";
 import styles from "./Nav.module.css";
+import { memo } from "react";
 
 const navRoutes = [
   { id: crypto.randomUUID(), path: "", title: "Home" },
@@ -23,5 +24,4 @@ const Nav = () => {
   );
 };
 
-export default Nav;
-// export default memo(Nav);
+export default memo(Nav);
