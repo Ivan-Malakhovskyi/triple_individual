@@ -187,3 +187,82 @@ const [state, dispatch] = useReducer(countReducer, {
   count: 0,
 });
 ```
+
+3. useCallback()
+
+Ми огорнули Child у React.memo, щоб React міг пропускати повторний рендер
+дочірнього компонента, якщо його пропси не змінилися.
+
+```jsx
+import { memo } from "react";
+
+const Child = memo(function Child({ onClick }) {
+  console.log("Child rendered");
+
+  return <button onClick={onClick}>Click child</button>;
+});
+
+export default Child;
+
+import { useState } from "react";
+import Child from "./Child";
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  const handleClick = () => {
+    console.log("Clicked");
+  };
+
+  return (
+    <>
+      <p>{count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+
+      <Child onClick={handleClick} />
+    </>
+  );
+}
+```
+
+Що відбувається?
+
+1. Змінюється count.
+2. App рендериться повторно.
+3. Створюється нова функція handleClick із новим посиланням.
+4. React.memo бачить, що проп onClick змінився.
+5. Child рендериться повторно.
+
+```js
+const handleClick = useCallback(() => {
+  console.log("CLICKED");
+}, []);
+```
+
+Тепер посилання на handleClick не змінюється під час оновлення count, тому
+React.memo може пропустити повторний рендер Child.
+
+```js
+const [count, setCount] = useState(0);
+
+const increment = useCallback(() => {
+  setCount(count + 1);
+}, [count]);
+```
+
+Тут count є залежністю. Коли він змінюється, React створює нову версію
+increment.
+
+І важливий нюанс: якщо Child маленький і дешевий у рендері, ця оптимізація може
+бути зайвою. Не потрібно обгортати кожен компонент у memo — оптимізуй тоді, коли
+це справді дає користь.
+
+```js
+const func = () => {
+  setCount(count + 1);
+};
+
+useEffect(() => {
+  func();
+}, [count]);
+```

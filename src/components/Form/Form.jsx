@@ -1,8 +1,12 @@
-import { Component, useState } from "react";
+import { Component, useReducer, useState } from "react";
 
 //closures
 
+const reducer = () => {};
+
 export const Form = () => {
+  // const [] = useReducer(reducer, {})
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

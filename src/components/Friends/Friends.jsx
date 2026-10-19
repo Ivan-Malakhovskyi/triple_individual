@@ -10,9 +10,20 @@ export const Friends = () => {
   //   console.log("RENDER" + Date.now());
   // }, [query, friends]);
 
-  const filteredFriends = friends.filter(({ name }) =>
-    name.toLowerCase().includes(query),
-  );
+  // IIFE (() => {})()
+
+  // const filteredFriends = (() => {
+  //   console.log("RENDER", new Date());
+  //   return friends.filter(({ name }) => {
+  //     return name.toLowerCase().includes(query);
+  //   });
+  // })();
+
+  const filteredFriends = useMemo(() => {
+    console.log("RENDER", new Date());
+    return friends.filter(({ name }) => name.toLowerCase().includes(query));
+  }, [query, friends]);
+
   return (
     <div>
       <button onClick={() => setCount(prev => prev + 1)}>Count {count}</button>
