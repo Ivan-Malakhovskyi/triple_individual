@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Routes, Route, Link } from "react-router";
 import { Layout } from "./components/Layout/Layout";
 import { Counter } from "./components/Counter/Counter";
