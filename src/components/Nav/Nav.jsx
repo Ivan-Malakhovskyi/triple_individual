@@ -1,13 +1,15 @@
+import React from "react";
 import { NavLink } from "react-router";
 import styles from "./Nav.module.css";
-import { memo } from "react";
 
 const navRoutes = [
   { id: crypto.randomUUID(), path: "", title: "Home" },
-  { id: crypto.randomUUID(), path: "clock", title: "Годинник" },
+  { id: crypto.randomUUID(), path: "counter", title: "useReducer" },
+  { id: crypto.randomUUID(), path: "friends", title: "useMemo" },
+  // { id: crypto.randomUUID(), path: "callback", title: "useCallback" },
 ];
 
-const Nav = () => {
+export const Nav = () => {
   return (
     <nav className={styles.nav}>
       {navRoutes.map(({ id, path, title }) => (
@@ -23,5 +25,3 @@ const Nav = () => {
     </nav>
   );
 };
-
-export default memo(Nav);

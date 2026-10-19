@@ -1,224 +1,268 @@
-# useRef
+# Тема 19. useMemo(), useCallback(), useReducer
 
-КНОПКА STOP НЕ ПРАЦЮЄ !
+1. useMemo()
 
-```jsx
-const [time, setTime] = useState(() => new Date().toLocaleTimeString());
+Якщо я натисну на count, то зміниться стан і компонент перерендериться,
+оскільки, коли в нас відбуається rerender, коли змінюється або стан або пропси
 
-//   const ref = useRef(null);
+Але count ніяк не відноситься до мого фільтра
 
-let intervalId = null;
+```js
+const [count, setCount] = useState(0);
+const [friends, setFriends] = useState(initialData);
+const [query, setQuery] = useState("");
 
-const stop = () => {
-  clearInterval(intervalId);
+const filteredFriends = friends.filter(({ name }) =>
+  name.toLowerCase().includes(query),
+);
+```
+
+ДОКАЗ ТОГО ЩО відбувається render при зміні count
+
+```js
+const filteredFriends = (() => {
+  console.log("RENDER" + Date.now());
+  return friends.filter(({ name }) => name.toLowerCase().includes(query));
+})();
+```
+
+```js
+const filteredFriends = useMemo(() => {
+  console.log("RENDER" + Date.now());
+  return friends.filter(({ name }) => name.toLowerCase().includes(query));
+}, [query, friends]);
+```
+
+Але маєте пам'ятати, що не завжди це добре, мемоізація це також виконнаня
+якогосб коду, яка може бути дорожчою за повторний рендер. В даному випадку
+колекція занадто мала
+
+React devtools Profiler
+
+## useReducer() -хук для керування більш складним станом, наприклад, щоб
+
+зберігати в одному об'єкті і error, status, articles 2
+
+2.
+
+state - стан dispatch - функція для відправки reducer - функція, яка приймає
+state, action
+
+```js
+const [state, dispatch] = useReducer(first, second, third);
+```
+
+```js
+const countReducer = (prevState, nextState) => {
+ret
 };
 
-useEffect(() => {
-  intervalId = setInterval(
-    () => setTime(new Date().toLocaleTimeString()),
-    1000,
+
+const [counter, setCounter] = useReducer(countReducer, 0);
+
+      <p>Count {counter}</p>
+
+      <button type="button" onClick={() => setCounter(1)}>
+        Increment
+      </button>
+      <button type="button" onClick={() => setCounter(1)}>
+        Decrement
+      </button>
+```
+
+Те що передаємо в setCounter(1) запишеться в nextState, а попередній стан в
+prevState
+
+тут приходить Action - дія, що ми хочемо зробити
+
+```jsx
+setCounter({
+  type: "increment",
+  payload: 1,
+});
+
+setCounter({
+  type: "decrement",
+  payload: 1,
+});
+```
+
+```jsx
+const countReducer = (state, action) => {
+  switch (action.type) {
+    case "increment":
+      return state + action.payload;
+    case "decrement":
+      return state - action.payload;
+    default:
+      return state;
+  }
+};
+```
+
+ЗМІНЮЄМО на dispatch
+
+REDUCER - функція, яка під капотом отримує стан і змінює його
+
+Стан може бути і об'єктом
+
+```jsx
+
+  const [counter, dispatch] = useReducer(countReducer, {
+    count: 0,
+  });
+
+    case "increment":
+      return {
+        ...state,
+        count: state.count + action.payload,
+      };
+
+    case "decrement":
+      return {
+        ...state,
+        count: state.count - action.payload,
+      };
+```
+
+useReducer
+
+опціонально init: Функція ініціалізатора, яка повинна повернути початковий стан.
+Якщо її не вказано, початковий стан буде встановлено у initialArg. В іншому
+випадку, початковий стан встановлюється до результату виклику init(initialArg).
+
+```js
+function init(params) {
+  return params + 5;
+}
+
+const [state, dispatch] = useReducer(
+  articlesReducer,
+  {
+    status: STATUS.IDLE,
+    articles: [],
+    error: null,
+  },
+  init,
+);
+```
+
+І тоді ,якщо передати init, то результатом функції init буде початковий стан
+reducer, а якщо не передати init, то початковий стан буде таким яким його
+передав, наприклад
+
+'
+
+```js
+const [state, dispatch] = useReducer(articlesReducer, 0);
+```
+
+```js
+function init(initialState) {
+  return { ...initialState, count: initialState.count + 10 };
+}
+```
+
+```js
+const countReducer = (state, action) => {
+  switch (action.type) {
+    case "increment":
+      return {
+        ...state,
+        count: state.count + action.payload,
+      };
+
+    case "decrement":
+      return {
+        ...state,
+        count: state.count - action.payload,
+      };
+
+    default:
+      throw new Error(`Unsupported action ${action.type}`);
+  }
+};
+
+const [state, dispatch] = useReducer(countReducer, {
+  count: 0,
+});
+```
+
+3. useCallback()
+
+Ми огорнули Child у React.memo, щоб React міг пропускати повторний рендер
+дочірнього компонента, якщо його пропси не змінилися.
+
+```jsx
+import { memo } from "react";
+
+const Child = memo(function Child({ onClick }) {
+  console.log("Child rendered");
+
+  return <button onClick={onClick}>Click child</button>;
+});
+
+export default Child;
+
+import { useState } from "react";
+import Child from "./Child";
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  const handleClick = () => {
+    console.log("Clicked");
+  };
+
+  return (
+    <>
+      <p>{count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+
+      <Child onClick={handleClick} />
+    </>
   );
+}
+```
+
+Що відбувається?
+
+1. Змінюється count.
+2. App рендериться повторно.
+3. Створюється нова функція handleClick із новим посиланням.
+4. React.memo бачить, що проп onClick змінився.
+5. Child рендериться повторно.
+
+```js
+const handleClick = useCallback(() => {
+  console.log("CLICKED");
 }, []);
 ```
 
-ПОЯСНЕННЯ:
+Тепер посилання на handleClick не змінюється під час оновлення count, тому
+React.memo може пропустити повторний рендер Child.
 
-Коли був class це clearInterval був властивістю класу і воно ініціалізувалось
-один раз при створенні екземпляра класа під час виклику. І потім викликався
-метод render()
+```js
+const [count, setCount] = useState(0);
 
-В Функціях тіло виконується коли змінюється або props або state. IntervalId на
-кожному рендері буде різна
+const increment = useCallback(() => {
+  setCount(count + 1);
+}, [count]);
+```
 
-```jsx
-let intervalId = null;
+Тут count є залежністю. Коли він змінюється, React створює нову версію
+increment.
 
-const stop = () => {
-  clearInterval(intervalId);
+І важливий нюанс: якщо Child маленький і дешевий у рендері, ця оптимізація може
+бути зайвою. Не потрібно обгортати кожен компонент у memo — оптимізуй тоді, коли
+це справді дає користь.
+
+```js
+const func = () => {
+  setCount(count + 1);
 };
 
 useEffect(() => {
-  intervalId = setInterval(
-    () => setTime(new Date().toLocaleTimeString()),
-    1000,
-  );
-}, []);
-
-console.log(intervalId); - завжди null
-```
-
-ВИКОРИСТОВУЄМО useRef() - і досі нічого не робить
-
-Приклад з cleanupFunc всередині useEffect
-
-````jsx
-export const Clock = () => {
-  const [time, setTime] = useState(() => new Date().toLocaleTimeString());
-
-  const intervalId = useRef(null);
-
-  useEffect(() => {
-    console.log(time);
-    // intervalId.current = setInterval(
-    //   () => setTime(new Date().toLocaleTimeString()),
-    //   1000,
-    // );
-
-    return () => {
-      console.log("Функція очистки перед наступним викликом useEffect");
-    };
-  }, [time]);
-
-  const stop = () => {
-    clearInterval(intervalId.current);
-  };
-
-  console.log("🚀 ~ Clock ~ intervalId:", intervalId);
-  return (
-    <div>
-      <h1>{time}</h1>
-
-      <button
-        type="button"
-        onClick={() => setTime(new Date().toLocaleDateString())}
-      >
-        Update time
-      </button>
-      <button type="button" onClick={stop}>
-        Stop time
-      </button>
-    </div>
-  );
-};
-
-
-
-
-
-## Old way Context
-
-1. createContext
-
-```jsx
-import { createContext } from "react";
-
-export default createContext();
-````
-
-2. Create Provider
-
-```jsx
-import React, { useMemo, useState } from "react";
-import avatar from "@/assets/react.svg";
-import authContext from "./context";
-
-const Provider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const login = () => {
-    setUser({ name: "User", avatar });
-    setIsLoggedIn(true);
-  };
-
-  const logout = () => {
-    setUser(null);
-    setIsLoggedIn(false);
-  };
-
-  const providerValue = useMemo(() => {
-    return { user, isLoggedIn, login, logout };
-  }, [user, isLoggedIn]);
-
-  return (
-    <authContext.Provider value={providerValue}>
-      {children}
-    </authContext.Provider>
-  );
-};
-
-export default Provider;
-```
-
-3. Wrap App
-
-```jsx
-<AuthProvider>
-  <App />
-</AuthProvider>
-```
-
-4. Use
-
-```jsx
-AuthProvider;
-
-import React, { useMemo, useState } from "react";
-import avatar from "@/assets/react.svg";
-import authContext from "./context";
-
-const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const login = () => {
-    setUser({ name: "User", avatar });
-    setIsLoggedIn(true);
-  };
-
-  const logout = () => {
-    setUser(null);
-    setIsLoggedIn(false);
-  };
-
-  const providerValue = useMemo(() => {
-    return { user, isLoggedIn, login, logout };
-  }, [user, isLoggedIn]);
-
-  return (
-    <authContext.Provider value={providerValue}>
-      {children}
-    </authContext.Provider>
-  );
-};
-
-export default AuthProvider;
-```
-
-```jsx
-<authContext.Consumer>
-  {({ isLoggedIn, user, login, logout }) => {
-    return (
-      <header className={styles.header}>
-        <Nav />
-        {!isLoggedIn ? (
-          <button type="button" onClick={login}>
-            Login
-          </button>
-        ) : (
-          <UserMenu user={user} onLogout={logout} />
-        )}
-      </header>
-    );
-  }}
-</authContext.Consumer>
-```
-
-### Modern way in class Component
-
-```jsx
-
-  const { isLoggedIn, user, login, logout } = useContext(authContext);
-
-  return (
-    <header className={styles.header}>
-      <Nav />
-      {!isLoggedIn ? (
-        <button type="button" onClick={login}>
-          Login
-        </button>
-      ) : (
-        <UserMenu user={user} onLogout={logout} />
-      )}
-    </header>
+  func();
+}, [count]);
 ```

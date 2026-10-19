@@ -1,21 +1,7 @@
-Flame graph - react Profiler
+# Тема 19. useMemo(), useCallback(), useReducer
 
-Тема 18. useRef(), useContext()
+1. useMemo() - запам'ятовування повторних ререндерів
 
-1. useRef, useContext
-2. Optimize rerender while using context
+2. useReducer() -хук для керування більш складним станом
 
-Оскільки Nav перемальовується, бо змінюється батько, але він статичний туди
-ніяких пропсів і стейту не передають, можна його огорнути в memo
-
-```js
-export default memo(Nav);
-```
-
-# useEffect vs useLayoutEffect
-
-**useEffect** - side effects; **useLayoutEffect** - change dom node directly
-
-Завнтаження контенту не більше 16ms = 60 fps
-
-чому так 1000/60 = 16.666 = 1 кадр
+3. useCallback() - запам'ятовування посилання на функцію
