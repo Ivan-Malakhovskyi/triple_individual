@@ -6,6 +6,7 @@ const navRoutes = [
   { id: crypto.randomUUID(), path: "", title: "Home" },
   { id: crypto.randomUUID(), path: "counter", title: "useReducer" },
   { id: crypto.randomUUID(), path: "friends", title: "useMemo" },
+  { id: crypto.randomUUID(), path: "example", title: "useCallback" },
 ];
 
 export const Nav = () => {
