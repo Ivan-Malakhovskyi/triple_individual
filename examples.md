@@ -1,268 +1,101 @@
-# Тема 19. useMemo(), useCallback(), useReducer
+# useContext
 
-1. useMemo()
-
-Якщо я натисну на count, то зміниться стан і компонент перерендериться,
-оскільки, коли в нас відбуається rerender, коли змінюється або стан або пропси
-
-Але count ніяк не відноситься до мого фільтра
+створюємо теку context/auth: context.js
 
 ```js
-const [count, setCount] = useState(0);
-const [friends, setFriends] = useState(initialData);
-const [query, setQuery] = useState("");
+import { createContext } from "react";
 
-const filteredFriends = friends.filter(({ name }) =>
-  name.toLowerCase().includes(query),
-);
+export default createContext();
 ```
 
-ДОКАЗ ТОГО ЩО відбувається render при зміні count
-
-```js
-const filteredFriends = (() => {
-  console.log("RENDER" + Date.now());
-  return friends.filter(({ name }) => name.toLowerCase().includes(query));
-})();
-```
-
-```js
-const filteredFriends = useMemo(() => {
-  console.log("RENDER" + Date.now());
-  return friends.filter(({ name }) => name.toLowerCase().includes(query));
-}, [query, friends]);
-```
-
-Але маєте пам'ятати, що не завжди це добре, мемоізація це також виконнаня
-якогосб коду, яка може бути дорожчою за повторний рендер. В даному випадку
-колекція занадто мала
-
-React devtools Profiler
-
-## useReducer() -хук для керування більш складним станом, наприклад, щоб
-
-зберігати в одному об'єкті і error, status, articles 2
-
-2.
-
-state - стан dispatch - функція для відправки reducer - функція, яка приймає
-state, action
-
-```js
-const [state, dispatch] = useReducer(first, second, third);
-```
-
-```js
-const countReducer = (prevState, nextState) => {
-ret
-};
-
-
-const [counter, setCounter] = useReducer(countReducer, 0);
-
-      <p>Count {counter}</p>
-
-      <button type="button" onClick={() => setCounter(1)}>
-        Increment
-      </button>
-      <button type="button" onClick={() => setCounter(1)}>
-        Decrement
-      </button>
-```
-
-Те що передаємо в setCounter(1) запишеться в nextState, а попередній стан в
-prevState
-
-тут приходить Action - дія, що ми хочемо зробити
+AuthProvider.jsx
 
 ```jsx
-setCounter({
-  type: "increment",
-  payload: 1,
-});
+import { useMemo, useState } from "react";
+import authProvider from "./context";
+import avatar from "@/assets/react.svg";
 
-setCounter({
-  type: "decrement",
-  payload: 1,
-});
-```
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-```jsx
-const countReducer = (state, action) => {
-  switch (action.type) {
-    case "increment":
-      return state + action.payload;
-    case "decrement":
-      return state - action.payload;
-    default:
-      return state;
-  }
-};
-```
+  const login = () => {
+    setUser({ name: "Andriy", avatar });
+    setIsLoggedIn(true);
+  };
 
-ЗМІНЮЄМО на dispatch
+  const logout = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+  };
 
-REDUCER - функція, яка під капотом отримує стан і змінює його
-
-Стан може бути і об'єктом
-
-```jsx
-
-  const [counter, dispatch] = useReducer(countReducer, {
-    count: 0,
-  });
-
-    case "increment":
-      return {
-        ...state,
-        count: state.count + action.payload,
-      };
-
-    case "decrement":
-      return {
-        ...state,
-        count: state.count - action.payload,
-      };
-```
-
-useReducer
-
-опціонально init: Функція ініціалізатора, яка повинна повернути початковий стан.
-Якщо її не вказано, початковий стан буде встановлено у initialArg. В іншому
-випадку, початковий стан встановлюється до результату виклику init(initialArg).
-
-```js
-function init(params) {
-  return params + 5;
-}
-
-const [state, dispatch] = useReducer(
-  articlesReducer,
-  {
-    status: STATUS.IDLE,
-    articles: [],
-    error: null,
-  },
-  init,
-);
-```
-
-І тоді ,якщо передати init, то результатом функції init буде початковий стан
-reducer, а якщо не передати init, то початковий стан буде таким яким його
-передав, наприклад
-
-'
-
-```js
-const [state, dispatch] = useReducer(articlesReducer, 0);
-```
-
-```js
-function init(initialState) {
-  return { ...initialState, count: initialState.count + 10 };
-}
-```
-
-```js
-const countReducer = (state, action) => {
-  switch (action.type) {
-    case "increment":
-      return {
-        ...state,
-        count: state.count + action.payload,
-      };
-
-    case "decrement":
-      return {
-        ...state,
-        count: state.count - action.payload,
-      };
-
-    default:
-      throw new Error(`Unsupported action ${action.type}`);
-  }
-};
-
-const [state, dispatch] = useReducer(countReducer, {
-  count: 0,
-});
-```
-
-3. useCallback()
-
-Ми огорнули Child у React.memo, щоб React міг пропускати повторний рендер
-дочірнього компонента, якщо його пропси не змінилися.
-
-```jsx
-import { memo } from "react";
-
-const Child = memo(function Child({ onClick }) {
-  console.log("Child rendered");
-
-  return <button onClick={onClick}>Click child</button>;
-});
-
-export default Child;
-
-import { useState } from "react";
-import Child from "./Child";
-
-function App() {
-  const [count, setCount] = useState(0);
-
-  const handleClick = () => {
-    console.log("Clicked");
+  const providerValue = {
+    login,
+    logout,
+    isLoggedIn,
+    user,
   };
 
   return (
-    <>
-      <p>{count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-
-      <Child onClick={handleClick} />
-    </>
+    <authProvider.Provider value={providerValue}>
+      {children}
+    </authProvider.Provider>
   );
-}
-```
-
-Що відбувається?
-
-1. Змінюється count.
-2. App рендериться повторно.
-3. Створюється нова функція handleClick із новим посиланням.
-4. React.memo бачить, що проп onClick змінився.
-5. Child рендериться повторно.
-
-```js
-const handleClick = useCallback(() => {
-  console.log("CLICKED");
-}, []);
-```
-
-Тепер посилання на handleClick не змінюється під час оновлення count, тому
-React.memo може пропустити повторний рендер Child.
-
-```js
-const [count, setCount] = useState(0);
-
-const increment = useCallback(() => {
-  setCount(count + 1);
-}, [count]);
-```
-
-Тут count є залежністю. Коли він змінюється, React створює нову версію
-increment.
-
-І важливий нюанс: якщо Child маленький і дешевий у рендері, ця оптимізація може
-бути зайвою. Не потрібно обгортати кожен компонент у memo — оптимізуй тоді, коли
-це справді дає користь.
-
-```js
-const func = () => {
-  setCount(count + 1);
 };
 
-useEffect(() => {
-  func();
-}, [count]);
+export default AuthProvider;
 ```
+
+in App Bar
+
+```js
+<AuthProvider>
+  <App />
+</AuthProvider>;
+const { isLoggedIn, user, login, logout } = useContext(authContext);
+```
+
+## useReducer
+
+ПОКАЗАТИ RE-EXPORTS
+
+Є компонент Counter, давайте дивитися на нього і рефакторити Form.jsx
+
+### useRef
+
+```jsx
+import { useEffect, useRef, useState } from "react";
+
+export const Clock = () => {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString());
+
+  const intervalId = useRef(null);
+
+  useEffect(() => {
+    intervalId.current = setInterval(
+      () => setTime(new Date().toLocaleTimeString()),
+      1000,
+    );
+
+    return () => {
+      stop();
+      console.log("Функція очистки перед наступним викликом useEffect");
+    };
+  }, []);
+
+  const stop = () => {
+    clearInterval(intervalId.current);
+  };
+
+  return (
+    <div>
+      <h1>{time}</h1>
+      <button type="button" onClick={stop}>
+        Stop time
+      </button>
+    </div>
+  );
+};
+```
+
+#### OWn hook for modal
