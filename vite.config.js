@@ -4,6 +4,7 @@ import { fileURLToPath, URL } from "node:url";
 
 //! IF you are using routes like react router add base: /Repo_name/
 //! https://vite.dev/guide/static-deploy#github-pages
+const doAlias = (path = "") => fileURLToPath(new URL(path, import.meta.url));
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,7 +12,8 @@ export default defineConfig({
   base: "/triple_individual",
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@": doAlias("./src"),
+      // "@core": doAlias("./"),
     },
   },
 });

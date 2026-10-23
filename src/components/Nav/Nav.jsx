@@ -4,9 +4,10 @@ import styles from "./Nav.module.css";
 
 const navRoutes = [
   { id: crypto.randomUUID(), path: "", title: "Home" },
-  { id: crypto.randomUUID(), path: "counter", title: "useReducer" },
-  { id: crypto.randomUUID(), path: "friends", title: "useMemo" },
-  // { id: crypto.randomUUID(), path: "callback", title: "useCallback" },
+  { id: crypto.randomUUID(), path: "clock", title: "Clock" },
+  { id: crypto.randomUUID(), path: "form", title: "Form" },
+  { id: crypto.randomUUID(), path: "friends", title: "Friends" },
+  { id: crypto.randomUUID(), path: "counter", title: "Counter" },
 ];
 
 export const Nav = () => {

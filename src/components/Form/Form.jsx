@@ -1,12 +1,7 @@
-import { Component, useReducer, useState } from "react";
-
-//closures
-
-const reducer = () => {};
+import { useState } from "react";
+import styles from "./Form.module.css";
 
 export const Form = () => {
-  // const [] = useReducer(reducer, {})
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,8 +9,6 @@ export const Form = () => {
     e.preventDefault();
     setEmail("");
     setPassword("");
-
-    // e.target.reset();
   };
 
   const handleChange = e => {
@@ -36,14 +29,11 @@ export const Form = () => {
   };
 
   return (
-    <form
-      autoComplete="off"
-      onSubmit={handleSubmit}
-      style={{ position: "relative" }}
-    >
+    <form className={styles.form} autoComplete="off" onSubmit={handleSubmit}>
       <label>
         email:
         <input
+          className={styles.input}
           name="email"
           type="email"
           value={email}
@@ -53,6 +43,7 @@ export const Form = () => {
       <label>
         Password:
         <input
+          className={styles.input}
           name="password"
           type="password"
           value={password}
@@ -60,63 +51,7 @@ export const Form = () => {
         />
       </label>
 
-      <button style={{ position: "absolute" }} type="submit">
-        Signup
-      </button>
+      <button type="submit">Signup</button>
     </form>
   );
 };
-
-export class FormOld extends Component {
-  state = {
-    email: "",
-    password: "",
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-
-    e.target.reset();
-  };
-
-  handleChange = e => {
-    const { name, value } = e.target;
-
-    this.setState({ [name]: value });
-  };
-
-  render() {
-    const { email, password } = this.state;
-
-    return (
-      <form
-        autoComplete="off"
-        onSubmit={this.handleSubmit}
-        style={{ position: "relative" }}
-      >
-        <label>
-          email:
-          <input
-            name="email"
-            type="email"
-            value={email}
-            onChange={this.handleChange}
-          />
-        </label>
-        <label>
-          Password:
-          <input
-            name="password"
-            type="password"
-            value={password}
-            onChange={this.handleChange}
-          />
-        </label>
-
-        <button style={{ position: "absolute" }} type="submit">
-          Signup
-        </button>
-      </form>
-    );
-  }
-}

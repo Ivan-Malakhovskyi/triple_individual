@@ -4,7 +4,7 @@ import { AppBar } from "../AppBar/AppBar";
 
 export const Layout = () => {
   return (
-    <>
+    <div className="box">
       <AppBar />
       <main>
         <section style={{ marginTop: "40px" }}>
@@ -12,6 +12,6 @@ export const Layout = () => {
           <Outlet />
         </section>
       </main>
-    </>
+    </div>
   );
 };

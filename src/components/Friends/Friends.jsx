@@ -1,28 +1,14 @@
-import React, { useState, useMemo } from "react";
-import initialData from "../../../friends";
+import React, { useState } from "react";
+import initialData from "@/components/constants/friends";
 
 export const Friends = () => {
   const [count, setCount] = useState(0);
   const [friends, setFriends] = useState(initialData);
   const [query, setQuery] = useState("");
 
-  // const filteredFriends = useMemo(() => {
-  //   console.log("RENDER" + Date.now());
-  // }, [query, friends]);
-
-  // IIFE (() => {})()
-
-  // const filteredFriends = (() => {
-  //   console.log("RENDER", new Date());
-  //   return friends.filter(({ name }) => {
-  //     return name.toLowerCase().includes(query);
-  //   });
-  // })();
-
-  const filteredFriends = useMemo(() => {
-    console.log("RENDER", new Date());
-    return friends.filter(({ name }) => name.toLowerCase().includes(query));
-  }, [query, friends]);
+  const filteredFriends = friends.filter(({ name }) =>
+    name.toLowerCase().includes(query),
+  );
 
   return (
     <div>

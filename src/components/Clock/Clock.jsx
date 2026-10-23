@@ -1,32 +1,40 @@
-import { useEffect, useRef, useState } from "react";
+import { Component } from "react";
 
-export const Clock = () => {
-  const [time, setTime] = useState(() => new Date().toLocaleTimeString());
+export class Clock extends Component {
+  state = {
+    time: new Date().toLocaleTimeString(),
+  };
 
-  const intervalId = useRef(null);
+  intervalId = null;
 
-  useEffect(() => {
-    intervalId.current = setInterval(
-      () => setTime(new Date().toLocaleTimeString()),
+  componentDidMount() {
+    console.log("Interval");
+    this.intervalId = setInterval(
+      () => this.setState({ time: new Date().toLocaleTimeString() }),
       1000,
     );
 
-    return () => {
-      stop();
-      console.log("Функція очистки перед наступним викликом useEffect");
-    };
-  }, []);
+    console.log(this.intervalId);
+  }
 
-  const stop = () => {
-    clearInterval(intervalId.current);
+  componentWillUnmount() {
+    return this.stop();
+  }
+
+  stop = () => {
+    clearInterval(this.intervalId);
   };
 
-  return (
-    <div>
-      <h1>{time}</h1>
-      <button type="button" onClick={stop}>
-        Stop time
-      </button>
-    </div>
-  );
-};
+  render() {
+    const { time } = this.state;
+
+    return (
+      <div>
+        <h1>{time}</h1>
+        <button type="button" onClick={this.stop}>
+          Stop time
+        </button>
+      </div>
+    );
+  }
+}
