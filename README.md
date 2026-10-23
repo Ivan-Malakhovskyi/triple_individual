@@ -4,3 +4,4 @@
 2. useReducer => Form.jsx
 3. useMemo => Friends.jsx
 4. useContext
+5. styled-components
