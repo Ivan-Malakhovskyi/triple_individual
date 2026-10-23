@@ -1,7 +1,6 @@
-# Тема 19. useMemo(), useCallback(), useReducer
+# Тема 20. React hooks practice.
 
-1. useMemo() - запам'ятовування повторних ререндерів
-
-2. useReducer() -хук для керування більш складним станом
-
-3. useCallback() - запам'ятовування посилання на функцію
+1. useRef => Clock.jsx
+2. useReducer => Form.jsx
+3. useMemo => Friends.jsx
+4. useContext

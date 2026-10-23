@@ -98,4 +98,18 @@ export const Clock = () => {
 };
 ```
 
-#### OWn hook for modal
+#### useMemo
+
+```js
+const filteredFriends = (() => {
+  console.log("RENDER", new Date());
+  return friends.filter(({ name }) => name.toLowerCase().includes(query));
+})();
+```
+
+```js
+const filteredFriends = useMemo(() => {
+  console.log("RENDER", new Date());
+  return friends.filter(({ name }) => name.toLowerCase().includes(query));
+}, [query, friends]);
+```
