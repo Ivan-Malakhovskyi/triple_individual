@@ -1,5 +1,5 @@
 1. npm i react-router
-2. URL parameters
+2. URL parameters (notes)
 3. BrowserRouter
 4. Routes + Route
 5. Link + NavLink
