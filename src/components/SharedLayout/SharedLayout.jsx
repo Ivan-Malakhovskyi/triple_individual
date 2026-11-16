@@ -1,16 +1,17 @@
 import React from "react";
 import { Outlet } from "react-router";
-import { AppBar } from "../AppBar/AppBar";
+import { AppBar } from "../AppBar";
 
-export const SharedLayout = () => {
+const SharedLayout = () => {
   return (
-    <div className="box">
+    <section>
       <AppBar />
+
       <main>
-        <section style={{ marginTop: "40px" }}>
-          <Outlet />
-        </section>
+        <Outlet />
       </main>
-    </div>
+    </section>
   );
 };
+
+export default SharedLayout;

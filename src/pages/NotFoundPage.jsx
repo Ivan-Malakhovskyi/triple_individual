@@ -1,10 +1,9 @@
 import React from "react";
-import { Link } from "react-router";
 
 const NotFoundPage = () => {
   return (
     <section>
-      <Link to="/">⬅️ Home</Link>
+      <a to="/">⬅️ Home</a>
       <h1>Not found page</h1>
     </section>
   );

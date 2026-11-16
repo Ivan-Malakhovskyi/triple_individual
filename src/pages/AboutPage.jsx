@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, Outlet } from "react-router";
 
-const About = () => {
+const AboutPage = () => {
   return (
     <h1>
       About Pages
@@ -15,4 +15,4 @@ const About = () => {
   );
 };
 
-export default About;
+export default AboutPage;

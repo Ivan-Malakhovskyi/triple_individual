@@ -1,5 +1,5 @@
-import ProductItem from "@/components/ProductItem/ProductItem";
 import React from "react";
+import ProductItem from "@/components/ProductItem";
 
 const ProductPage = () => <ProductItem />;
 
