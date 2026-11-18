@@ -1,26 +1,27 @@
-import { Route, Routes } from "react-router";
-import SharedLayout from "./components/SharedLayout";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import ProductPage from "./pages/ProductPage";
-import Products from "./pages/ProductsPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import AppBar from "./components/AppBar/AppBar";
 
-export const App = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<SharedLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="about" element={<AboutPage />}>
-          <Route path="mission" element={<div>Mission</div>} />
-          <Route path="team" element={<div>team</div>} />
-          <Route path="reviews" element={<div>reviews</div>} />
-        </Route>
+const colorPickerOptions = [
+  { label: "red", color: "#F44336" },
+  { label: "green", color: "#4CAF50" },
+  { label: "blue", color: "#2196F3" },
+  { label: "grey", color: "#607D8B" },
+  { label: "pink", color: "#E91E63" },
+  { label: "indigo", color: "#3F51B5" },
+];
 
-        <Route path="products" element={<Products />} />
-        <Route path="products/:productId" element={<ProductPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
-  );
+const containerStyles = {
+  maxWidth: 1170,
+  marginLeft: "auto",
+  marginRight: "auto",
+  paddingLeft: 15,
+  paddingRight: 15,
 };
+
+export default function App() {
+  return (
+    <div style={containerStyles}>
+      <AppBar />
+      <section>HOME</section>
+    </div>
+  );
+}

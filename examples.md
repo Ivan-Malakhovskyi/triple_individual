@@ -1,76 +1,88 @@
 ```jsx
-<Routes>
-  <Route
-    path="/"
-    element={
-      <>
-        <AppBar />
-        <HomePage />
-      </>
-    }
-  />
-  <Route path="/about" element={<About />} />
-  <Route path="/products" element={<Products />} />
-  <Route path="*" element={<NotFoundPage />} />
-  <HomePage />
-</Routes>
+<BrowserRouter basename="/triple_individual">
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+</BrowserRouter>
 ```
 
 ```jsx
-<NavLink to="/" className={({ isActive }) => (isActive ? styles.active : null)}>
-  Home
-</NavLink>
+<div style={containerStyles}>
+  <AppBar />
+
+  <Routes>
+    <Route path="/" element={<section>HOME </section>} />
+    <Route path="/signup" element={<SignupForm />} />
+
+    <Route
+      path="/colorpicker"
+      element={<ColorPicker options={colorPickerOptions} />}
+    />
+
+    <Route path="/counter" element={<Counter />} />
+
+    <Route path="/clock" element={<Clock />} />
+
+    <Route path="/pokemon" element={<PokemonView />} />
+  </Routes>
+</div>
 ```
 
-```jsx
-<Route path="/products/:productsId" element={<ProductPage />} />
-```
-
-ADD useParams() in item element
+Navigation
 
 ```jsx
-<Route path="/about" element={<About />}>
-  <Route path="mission" element={<div>Mission</div>} />
-  <Route path="team" element={<div>Team</div>} />
-  <Route path="reviews" element={<div>Reviews</div>} />
-  <Route />
-</Route>
+import React, { useContext } from "react";
+import { NavLink } from "react-router";
+import styles from "./Navigation.module.css";
+import authContext from "../../context/auth/context";
 
-      <Outlet /> in About.jsx
-```
+const nav = [
+  { id: 3, title: "Колорпікер", path: "colorpicker" },
+  { id: 4, title: "Лічильник", path: "counter" },
+  { id: 5, title: "Годинник", path: "clock" },
+  { id: 6, title: "Покемони", path: "pokemon" },
+];
 
-```jsx
-export const SharedLayout = () => {
+const Navigation = () => {
+  const { isLoggedIn } = useContext(authContext);
+
   return (
-    <div className="box">
-      <AppBar />
-      <main>
-        <section style={{ paddingTop: "40px" }}>
-          <Outlet />
-        </section>
-      </main>
-    </div>
+    <nav>
+      <NavLink
+        className={({ isActive }) =>
+          isActive ? `${styles.activeLink}` : `${styles.link}`
+        }
+        to="/"
+      >
+        Home{" "}
+      </NavLink>
+      {isLoggedIn ? (
+        nav.map(({ id, title, path }) => (
+          <NavLink
+            key={id}
+            className={({ isActive }) =>
+              isActive ? `${styles.activeLink}` : `${styles.link}`
+            }
+            to={`/${path}`}
+          >
+            {title}
+          </NavLink>
+        ))
+      ) : (
+        <>
+          <NavLink
+            className={({ isActive }) =>
+              isActive ? `${styles.activeLink}` : `${styles.link}`
+            }
+            to="/signup"
+          >
+            SignUp{" "}
+          </NavLink>
+        </>
+      )}
+    </nav>
   );
 };
-```
 
-```jsx
-<Routes>
-  <Route path="/" element={<SharedLayout />}>
-    <Route index element={<HomePage />} />
-
-    <Route path="about" element={<About />}>
-      <Route path="mission" element={<div>Mission</div>} />
-      <Route path="team" element={<div>Team</div>} />
-      <Route path="reviews" element={<div>Reviews</div>} />
-      <Route />
-    </Route>
-    <Route path="products" element={<Products />} />
-    <Route
-      path="products/:productId/selected/:item"
-      element={<ProductPage />}
-    />
-    <Route path="*" element={<NotFoundPage />} />
-  </Route>
-</Routes>
+export default Navigation;
 ```
