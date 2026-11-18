@@ -2,7 +2,7 @@ import { useContext } from "react";
 import Navigation from "../Navigation/Navigation";
 import UserMenu from "../UserMenu/UserMenu";
 import authContext from "../../context/auth/context";
-import styles from "./Appbar.module.css";
+import styles from "./AppBar.module.css";
 
 export default function Appbar() {
   const { isLoggedIn, user, onLogIn, onLogOut } = useContext(authContext);
