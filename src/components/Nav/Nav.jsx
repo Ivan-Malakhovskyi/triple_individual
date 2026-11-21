@@ -1,13 +1,32 @@
 import React from "react";
-import { Link } from "react-router";
+import { NavLink } from "react-router";
 import styles from "./Nav.module.css";
 
-export const Nav = () => {
+const nav = [
+  { id: 3, title: "Games", path: "games" },
+  { id: 4, title: "Login", path: "login" },
+];
+
+const Nav = () => {
   return (
     <nav className={styles.nav}>
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
-      <Link to="/products">Products</Link>
+      <NavLink
+        className={({ isActive }) => (isActive ? `${styles.active}` : null)}
+        to="/"
+      >
+        Home{" "}
+      </NavLink>
+      {nav.map(({ id, title, path }) => (
+        <NavLink
+          key={id}
+          className={({ isActive }) => (isActive ? `${styles.active}` : null)}
+          to={`/${path}`}
+        >
+          {title}
+        </NavLink>
+      ))}
     </nav>
   );
 };
+
+export default Nav;

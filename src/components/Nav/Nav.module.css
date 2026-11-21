@@ -1,10 +1,14 @@
 .nav {
     display: flex;
-    gap: 20px;
     align-items: center;
+    gap: 12px;
+
 
     & .active {
-        color: #2977eb;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background-color: orangered;
+        color: #fff;
     }
 
     &>a {
