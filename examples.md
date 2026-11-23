@@ -1,88 +1,106 @@
+1. Login.jsx
+
 ```jsx
-<BrowserRouter basename="/triple_individual">
-  <AuthProvider>
-    <App />
-  </AuthProvider>
-</BrowserRouter>
+const navigate = useNavigate();
+navigate("/games", { replace: true });
+<Navigate to="/games" replace />;
 ```
 
-```jsx
-<div style={containerStyles}>
-  <AppBar />
-
-  <Routes>
-    <Route path="/" element={<section>HOME </section>} />
-    <Route path="/signup" element={<SignupForm />} />
-
-    <Route
-      path="/colorpicker"
-      element={<ColorPicker options={colorPickerOptions} />}
-    />
-
-    <Route path="/counter" element={<Counter />} />
-
-    <Route path="/clock" element={<Clock />} />
-
-    <Route path="/pokemon" element={<PokemonView />} />
-  </Routes>
-</div>
-```
-
-Navigation
+2. GamePage.jsx
 
 ```jsx
-import React, { useContext } from "react";
-import { NavLink } from "react-router";
-import styles from "./Navigation.module.css";
-import authContext from "../../context/auth/context";
+const [searchParams, setSearchParams] = useSearchParams();
 
-const nav = [
-  { id: 3, title: "Колорпікер", path: "colorpicker" },
-  { id: 4, title: "Лічильник", path: "counter" },
-  { id: 5, title: "Годинник", path: "clock" },
-  { id: 6, title: "Покемони", path: "pokemon" },
-];
+const game = searchParams.get("search") ?? "";
 
-const Navigation = () => {
-  const { isLoggedIn } = useContext(authContext);
+const filteredGames = games.filter(({ title }) =>
+  title.toLowerCase().includes(game.toLowerCase()),
+);
 
-  return (
-    <nav>
-      <NavLink
-        className={({ isActive }) =>
-          isActive ? `${styles.activeLink}` : `${styles.link}`
-        }
-        to="/"
-      >
-        Home{" "}
-      </NavLink>
-      {isLoggedIn ? (
-        nav.map(({ id, title, path }) => (
-          <NavLink
-            key={id}
-            className={({ isActive }) =>
-              isActive ? `${styles.activeLink}` : `${styles.link}`
-            }
-            to={`/${path}`}
-          >
-            {title}
-          </NavLink>
-        ))
-      ) : (
-        <>
-          <NavLink
-            className={({ isActive }) =>
-              isActive ? `${styles.activeLink}` : `${styles.link}`
-            }
-            to="/signup"
-          >
-            SignUp{" "}
-          </NavLink>
-        </>
-      )}
-    </nav>
-  );
+const handleSearch = search => {
+  const params = search !== "" ? { search } : {};
+  setSearchParams(params);
 };
 
-export default Navigation;
+if (filteredGames.length === 0) {
+  return (
+    <div>
+      <h2>Such game not found</h2>
+      <p>Try to change filter {game}</p>
+    </div>
+  );
+}
+
+  <GameSearch game={game} handleSearch={handleSearch} />
+<GamesList filtered={filteredGames} />;
+```
+
+Params Like object
+
+```js
+const [searchParams] = useSearchParams();
+const params = useMemo(
+  () => Object.fromEntries([...searchParams]),
+  [searchParams],
+);
+const { name, maxPrice, inStock } = params;
+```
+
+Check changes
+
+```jsx
+useEffect(() => {
+  // Тут виконуємо асинхронну операцію,
+  // наприклад HTTP-запит за інформацією про користувача
+  if (username === "") return;
+
+  async function fetchUser() {
+    const user = await FakeAPI.getUser(username);
+    setUser(user);
+  }
+
+  fetchUser();
+}, [username]);
+```
+
+6. useLocation
+
+```jsx
+const location = useLocation();
+
+useEffect(() => {
+  Analytics.send(location);
+}, [location]);
+```
+
+location.state
+
+GameListItem.jsx
+
+```jsx
+const location = useLocation();
+console.log("GameListItem", location);
+
+<Link to={`/games/${id}`} key={id} state={{ from: location }}>
+  <span>{img}</span>
+  <p>{title}</p>
+  <p>{genre}</p>
+  <p>{"⭐".repeat(rating)}</p>
+</Link>;
+```
+
+GameInfo.jsx
+
+```jsx
+const { gameId } = useParams();
+const location = useLocation();
+console.log(location.state);
+
+const game = games.find(({ id }) => id === Number(gameId));
+
+if (!game) {
+  return <div>Such game not founded</div>;
+}
+
+const backLink = location.state?.from ?? "/games";
 ```

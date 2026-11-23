@@ -1,27 +1,28 @@
-import AppBar from "./components/AppBar/AppBar";
+import { lazy } from "react";
+import { Routes, Route } from "react-router";
+import { SharedLayout } from "./components/SharedLayout";
+// import NotFoundPage from "./pages/NotFoundPage";
+import HomePage from "./pages/HomePage";
+// import GamesPage from "./pages/GamesPage";
+// import GameInfoPage from "./pages/GameInfoPage";
+// import LoginPage from "./pages/LoginPage";
 
-const colorPickerOptions = [
-  { label: "red", color: "#F44336" },
-  { label: "green", color: "#4CAF50" },
-  { label: "blue", color: "#2196F3" },
-  { label: "grey", color: "#607D8B" },
-  { label: "pink", color: "#E91E63" },
-  { label: "indigo", color: "#3F51B5" },
-];
+const GamesPage = lazy(() => import("./pages/HomePage"));
+const GameInfoPage = lazy(() => import("./pages/GameInfoPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
-const containerStyles = {
-  maxWidth: 1170,
-  marginLeft: "auto",
-  marginRight: "auto",
-  paddingLeft: 15,
-  paddingRight: 15,
-};
-
-export default function App() {
+export const App = () => {
   return (
-    <div style={containerStyles}>
-      <AppBar />
-      <section>HOME</section>
-    </div>
+    <Routes>
+      <Route path="/" element={<SharedLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="about" element={<div>About</div>} />
+        <Route path="games" element={<GamesPage />} />
+        <Route path="games/:gameId" element={<GameInfoPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
-}
+};

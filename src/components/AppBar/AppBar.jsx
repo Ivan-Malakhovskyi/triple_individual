@@ -1,16 +1,15 @@
 import { useContext } from "react";
-import Navigation from "../Navigation/Navigation";
-import UserMenu from "../UserMenu/UserMenu";
-import authContext from "../../context/auth/context";
+import authContext from "@/components/context/auth/context";
+import Nav from "../Nav";
+import UserMenu from "../UserMenu";
 import styles from "./AppBar.module.css";
 
-export default function Appbar() {
-  const { isLoggedIn, user, onLogIn, onLogOut } = useContext(authContext);
+export const AppBar = () => {
+  const { isLoggedIn, onLogOut, user, onLogIn } = useContext(authContext);
 
   return (
     <header className={styles.header}>
-      <Navigation />
-
+      <Nav />
       {isLoggedIn ? (
         <UserMenu onLogOut={onLogOut} user={user} />
       ) : (
@@ -20,4 +19,4 @@ export default function Appbar() {
       )}
     </header>
   );
-}
+};

@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './UserMenu.module.css';
+import React from "react";
+import styles from "./UserMenu.module.css";
 
 export default function UserMenu({ onLogOut, user }) {
   return (
