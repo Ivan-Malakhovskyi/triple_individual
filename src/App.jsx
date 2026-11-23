@@ -7,7 +7,7 @@ import HomePage from "./pages/HomePage";
 // import GameInfoPage from "./pages/GameInfoPage";
 // import LoginPage from "./pages/LoginPage";
 
-const GamesPage = lazy(() => import("./pages/HomePage"));
+const GamesPage = lazy(() => import("./pages/GamesPage"));
 const GameInfoPage = lazy(() => import("./pages/GameInfoPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
