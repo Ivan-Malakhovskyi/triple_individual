@@ -1,11 +1,7 @@
-import { useLocation } from "react-router";
-import { GameListItem } from "../GameListItem/GameListItem";
+import { GameListItem } from "../GameListItem";
 import styles from "./GamesList.module.css";
 
 const GamesList = ({ filtered }) => {
-  const location = useLocation();
-  console.log(location);
-
   return (
     <ul className={styles.games_list}>
       {filtered.map(game => (

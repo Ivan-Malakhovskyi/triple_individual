@@ -1,9 +1,6 @@
-import { useNavigate } from "react-router";
 import { fakeLoginApi } from "../fakeAPI/auth";
 
 const Login = () => {
-  const navigate = useNavigate();
-
   const handleSubmit = async e => {
     e.preventDefault();
     const form = e.target;
@@ -13,9 +10,8 @@ const Login = () => {
 
     try {
       const resp = await fakeLoginApi(email, password);
-      console.log(resp);
+
       if (resp.success) {
-        navigate("/games", { replace: true });
         return resp;
       }
     } catch (error) {

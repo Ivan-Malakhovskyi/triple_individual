@@ -1,4 +1,4 @@
-export const GameSearch = ({ game, getByQuery }) => {
+export const GameSearch = ({ game, handleSearch }) => {
   return (
     <>
       <label htmlFor="search">
@@ -8,7 +8,7 @@ export const GameSearch = ({ game, getByQuery }) => {
           type="text"
           name="search"
           value={game}
-          onChange={e => getByQuery(e.target.value)}
+          onChange={e => handleSearch(e.target.value)}
         />
       </label>
     </>

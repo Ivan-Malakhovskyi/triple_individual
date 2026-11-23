@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router";
-import { AppBar } from "../AppBar/AppBar";
+import { AppBar } from "../AppBar";
 
 export const SharedLayout = () => {
   return (

@@ -1,6 +1,6 @@
-import { GameListItem } from "@/components/GameListItem/GameListItem";
 import React from "react";
+import GameInfo from "@/components/GameInfo/GameInfo";
 
-const GameInfoPage = () => <GameListItem />;
+const GameInfoPage = () => <GameInfo />;
 
 export default GameInfoPage;
