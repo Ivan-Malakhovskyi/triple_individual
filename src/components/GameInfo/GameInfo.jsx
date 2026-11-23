@@ -1,14 +1,18 @@
-import { Link, useParams } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import { games } from "@/dataSeed/games";
 
 const GameInfo = () => {
   const { gameId } = useParams();
+  const location = useLocation();
 
-  const game = games.find(({ id }) => id === gameId);
+  const game = games.find(({ id }) => id === Number(gameId));
+  const backLink = location.state?.from ?? "/games";
+  //! state?.from - optional chaining
+  //! ?? - nullish operator
 
   return (
     <div>
-      <Link to={{}}>Back to product</Link>
+      <Link to={backLink}>Back to product</Link>
       <h2>
         GAME INFO <b></b>
       </h2>

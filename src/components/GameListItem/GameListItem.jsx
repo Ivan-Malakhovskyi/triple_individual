@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router";
 
 export const GameListItem = ({ id, title, genre, rating, img }) => {
   const location = useLocation();
-  console.log("GameListItem", location);
 
   return (
     <Link to={`/games/${id}`} key={id} state={{ from: location }}>
