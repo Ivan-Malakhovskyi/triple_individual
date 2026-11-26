@@ -11,9 +11,7 @@ export const GameSearch = () => {
   // const [loading, setLoading] = useState(false);
   // const [error, setError] = useState(null);
 
-  const { searchGame, handleFormSubmit } = useQueryParams({
-    queryKey: "queryKey",
-  });
+  const { searchGame, handleFormSubmit } = useQueryParams("queryKey");
 
   const { loading, error, games, searchFailed } =
     useFetchGameByQuery(searchGame);
@@ -71,7 +69,7 @@ export const GameSearch = () => {
     <section>
       <form onSubmit={handleFormSubmit}>
         <input
-          name="queryKey"
+          name="search"
           type="text"
           placeholder="Пошук гри..."
           className={styles.search}

@@ -11,7 +11,7 @@ const apiClient = axios.create({
   },
 });
 
-export const getAll = async (controller) => {
+export const getAll = async controller => {
   try {
     const resp = await apiClient.get(`/games?key=${KEY}`, {
       signal: controller?.current?.signal,
@@ -22,11 +22,9 @@ export const getAll = async (controller) => {
   }
 };
 
-export const getByQuery = async (query = "", controller) => {
+export const getByQuery = async (query = "") => {
   try {
-    const resp = await apiClient.get(`/games?key=${KEY}&search=${query}`, {
-      signal: controller?.current?.signal,
-    });
+    const resp = await apiClient.get(`/games?key=${KEY}&search=${query}`);
 
     return resp.data.results;
   } catch (error) {

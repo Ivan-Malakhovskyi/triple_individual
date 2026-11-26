@@ -1,11 +1,9 @@
 import { useContext } from "react";
-import { useNavigate } from "react-router";
 import { fakeLoginApi } from "@/services/fakeLoginApi";
-import styles from "./Login.module.css";
 import authContext from "@/context/auth/context";
+import styles from "./Login.module.css";
 
 const Login = () => {
-  const navigate = useNavigate();
   const { onLogIn } = useContext(authContext);
 
   const handleSubmit = async e => {
@@ -20,7 +18,6 @@ const Login = () => {
 
       if (resp.success) {
         onLogIn();
-        navigate("/search_games", { replace: true });
         return resp;
       }
     } catch (error) {

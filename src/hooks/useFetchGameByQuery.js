@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { getByQuery } from "@/services/gameService";
 
@@ -7,17 +7,9 @@ export const useFetchGameByQuery = searchGame => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const controller = useRef(null);
 
   useEffect(() => {
     if (!searchGame) return;
-
-    if (controller.current) {
-      console.log("NEED TO CANCEL");
-      controller.current.abort();
-    }
-
-    controller.current = new AbortController();
 
     const fetchByQuery = async () => {
       setIsSearchFailed(false);
@@ -26,7 +18,7 @@ export const useFetchGameByQuery = searchGame => {
         setLoading(true);
         setError(null);
 
-        const resp = await getByQuery(searchGame, controller);
+        const resp = await getByQuery(searchGame);
 
         if (resp?.length === 0 && searchGame) {
           setIsSearchFailed(true);
@@ -36,10 +28,6 @@ export const useFetchGameByQuery = searchGame => {
 
         setGames(resp);
       } catch (error) {
-        if (error.code !== "ERR_CANCELLED") {
-          console.log(error.name);
-          setError(error);
-        }
         console.log(error);
       } finally {
         setLoading(false);
@@ -47,10 +35,6 @@ export const useFetchGameByQuery = searchGame => {
     };
 
     fetchByQuery();
-
-    return () => {
-      controller.current.abort();
-    };
   }, [searchGame]);
 
   return {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, Outlet, useLocation, useParams } from "react-router";
+import { Link, NavLink, Outlet } from "react-router";
 import { useFetchGameById } from "@/hooks";
 import { getGameById } from "@/services/gameService";
 import styles from "./GameInfo.module.css";
@@ -8,9 +8,7 @@ const GameInfo = () => {
   // const [loading, setLoading] = useState(false);
   // const [error, setError] = useState(null);
   // const [gameDetail, setGameDetail] = useState([]);
-  const { gameId } = useParams();
-  const location = useLocation();
-  const { loading, error, gameDetail } = useFetchGameById(gameId);
+  const { loading, error, gameDetail } = useFetchGameById("NEED ID");
   const controller = useRef();
 
   // const redirectPath = !location.pathname.includes("search")
@@ -19,8 +17,6 @@ const GameInfo = () => {
   // const forwardLink = location.pathname.includes("search")
   //   ? "search_games"
   //   : "games";
-
-  const backLink = location.state?.from ?? "/search_games";
 
   // useEffect(() => {
   //   if (!gameId) return;
@@ -53,7 +49,7 @@ const GameInfo = () => {
 
   return (
     <section>
-      <Link to={backLink} className={styles.back}>
+      <Link to="/" className={styles.back}>
         Повернутися до колекції
       </Link>
 
@@ -82,7 +78,7 @@ const GameInfo = () => {
 
           <div className={styles.tabs}>
             <NavLink
-              to={`/search_games/${gameId}/reviews`}
+              to={`/search_games/id/reviews`}
               className={({ isActive }) =>
                 isActive ? `${styles.tab} ${styles.tabActive}` : ""
               }
@@ -92,7 +88,7 @@ const GameInfo = () => {
             </NavLink>
 
             <NavLink
-              to={`/search_games/${gameId}/new_review`}
+              to={`/search_games/id/new_review`}
               className={({ isActive }) =>
                 isActive ? `${styles.tab} ${styles.tabActive}` : ""
               }

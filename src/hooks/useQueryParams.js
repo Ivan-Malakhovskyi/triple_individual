@@ -1,19 +1,13 @@
-import { useSearchParams } from "react-router";
 import toast from "react-hot-toast";
 
-export const useQueryParams = ({ games, queryKey }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const searchGame = searchParams.get(queryKey) ?? "";
-
-  const handleSearch = query => {
-    const newParams = query !== "" ? { queryKey: query } : {};
-    setSearchParams(newParams);
-  };
+export const useQueryParams = queryKey => {
+  const searchGame = "";
+  const handleSearch = () => {};
 
   const handleFormSubmit = e => {
     e.preventDefault();
 
-    const gameSearch = e.target.queryKey.value.trim();
+    const gameSearch = e.target.search.value.trim();
 
     if (!gameSearch) {
       toast.error("Введіть назву гри");
