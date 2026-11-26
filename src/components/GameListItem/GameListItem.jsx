@@ -1,14 +1,25 @@
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
+import styles from "./GameListItem.module.css";
 
-export const GameListItem = ({ id, title, genre, rating, img }) => {
-  const location = useLocation();
+export const GameListItem = ({
+  game: { id, background_image, name, genres },
+}) => {
+  // const path = !location.search ? `/games/${id}` : `/search_games/${id}`;
 
   return (
-    <Link to={`/games/${id}`} key={id} state={{ from: location }}>
-      <span>{img}</span>
-      <p>{title}</p>
-      <p>{genre}</p>
-      <p>{"⭐".repeat(rating)}</p>
-    </Link>
+    <li key={id}>
+      <Link to={`/search_games/${id}`}>
+        <img className={styles.cardImage} src={background_image} alt={name} />
+
+        <div className={styles.card}>
+          <h3 className={styles.cardTitle}>{name}</h3>
+          <p className={styles.cardGenre}>
+            {genres.map(({ name, id }) => (
+              <span key={id}>{name}</span>
+            ))}
+          </p>
+        </div>
+      </Link>
+    </li>
   );
 };

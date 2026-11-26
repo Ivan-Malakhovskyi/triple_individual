@@ -1,8 +1,27 @@
-1. Program navigation - useNavigate() | <Navigate to="/profile" replace />;
-2. Query string - useSearchParams()
-3. Parameters like object
-4. Change query string
-5. Check changes - useEffect
-6. Location object - useLocation()
-7. Property location.state
-8. Code splitting + Shared Layout with Suspense - lazy()
+1. Redirect after login
+2. SearchQuery
+3. location + from
+4. HTTP Abort
+5. Code splitting + lazy
+
+# //
+
+5. Зверніть увагу на такий сценарій
+
+- користувач шукає фільм => знаходить його
+- переходить на деталі фільму
+- потім вирішує повернутись назад через нашу навігацію Фільтри в URL адресі
+  мають зберегтися - це дає нам хук useLocation()
+
+2. AbortController
+
+- використовуємо useRef() чому ? (спробуйте відповісти на питання)
+- з useEffect() повертаємо функцію, яка скасовує запит (чому ми це робимо?)
+- controller передає в функцію де відбувється http запит
+- ставимо стан помилки тоді, коли це не ERR_CANCELLED, оскільки для нас це не
+  справжня помилка
+
+3. Code Splitting
+
+- Щоб подивитись, які модулі у вас завантажуються окемими чанками
+- npm (yarn) run build => dist/assets, а також в Network в браузері

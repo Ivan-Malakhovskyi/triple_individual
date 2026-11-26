@@ -1,18 +1,27 @@
 .nav {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.25rem;
+}
 
+.navLink {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all var(--transition);
 
-    & .active {
-        padding: 8px 12px;
-        border-radius: 8px;
-        background-color: orangered;
-        color: #fff;
+    &:hover,
+    &:focus {
+        color: var(--color-text-primary);
     }
+}
 
-    &>a {
-        color: #000;
-        font-weight: 600;
-    }
+.active {
+    padding: 0.625rem 1.25rem;
+    color: var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
 }

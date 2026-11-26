@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router";
-import authContext from "@/components/context/auth/context";
+import authContext from "@/context/auth/context";
 import styles from "./Nav.module.css";
 
 const privateRoutes = [
-  { id: crypto.randomUUID(), title: "Games", path: "games" },
+  { id: crypto.randomUUID(), title: "Search games", path: "search_games" },
+  { id: crypto.randomUUID(), title: "About", path: "about" },
 ];
 
 const publicRoutes = [
@@ -17,14 +18,18 @@ const Nav = () => {
   return (
     <nav className={styles.nav}>
       <NavLink
-        className={({ isActive }) => (isActive ? `${styles.active}` : null)}
+        className={({ isActive }) =>
+          isActive ? `${styles.active}` : `${styles.navLink}`
+        }
         to="/"
       >
         Home{" "}
       </NavLink>
       {!isLoggedIn ? (
         <NavLink
-          className={({ isActive }) => (isActive ? `${styles.active}` : null)}
+          className={({ isActive }) =>
+            isActive ? `${styles.active}` : `${styles.navLink}`
+          }
           to={`/login`}
         >
           Login
@@ -33,7 +38,9 @@ const Nav = () => {
         privateRoutes.map(({ id, title, path }) => (
           <NavLink
             key={id}
-            className={({ isActive }) => (isActive ? `${styles.active}` : null)}
+            className={({ isActive }) =>
+              isActive ? `${styles.active}` : `${styles.navLink}`
+            }
             to={`/${path}`}
           >
             {title}
