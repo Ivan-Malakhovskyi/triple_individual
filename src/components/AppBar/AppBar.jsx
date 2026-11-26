@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import authContext from "@/components/context/auth/context";
+import authContext from "@/context/auth/context";
 import Nav from "../Nav";
 import UserMenu from "../UserMenu";
 import styles from "./AppBar.module.css";

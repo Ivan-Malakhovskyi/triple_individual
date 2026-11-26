@@ -1,11 +1,11 @@
 import { GameListItem } from "../GameListItem";
 import styles from "./GamesList.module.css";
 
-const GamesList = ({ filtered }) => {
+const GamesList = ({ games }) => {
   return (
-    <ul className={styles.games_list}>
-      {filtered.map(game => (
-        <GameListItem key={game.id} {...game} />
+    <ul className={styles.grid}>
+      {games?.map(game => (
+        <GameListItem key={game.id} game={game} />
       ))}
     </ul>
   );
