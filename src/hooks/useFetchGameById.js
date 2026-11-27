@@ -10,13 +10,13 @@ export const useFetchGameById = gameId => {
   useEffect(() => {
     if (!gameId) return;
 
+    if (controller.current) {
+      controller.current.abort();
+    }
+
+    controller.current = new AbortController();
+
     const getMovieById = async () => {
-      if (controller.current) {
-        controller.current.abort();
-      }
-
-      controller.current = new AbortController();
-
       try {
         setLoading(true);
 
@@ -34,6 +34,10 @@ export const useFetchGameById = gameId => {
     };
 
     getMovieById();
+
+    return () => {
+      controller.current?.abort();
+    };
   }, [gameId]);
 
   return {

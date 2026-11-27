@@ -5,7 +5,7 @@ import { SharedLayout } from "./components/SharedLayout";
 import HomePage from "./pages/HomePage";
 
 const GamesSearchPage = lazy(() => import("./pages/GamesSearchPage"));
-const GameInfoPage = lazy(() => "./pages/GameInfoPage");
+const GameInfoPage = lazy(() => import("./pages/GameInfoPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const ReviewsPage = lazy(() => import("./pages/ReviewsPage"));
 const NewReviewPage = lazy(() => import("./pages/NewReviewPage"));

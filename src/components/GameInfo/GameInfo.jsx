@@ -4,7 +4,7 @@ import styles from "./GameInfo.module.css";
 
 const GameInfo = () => {
   const { gameId } = useParams();
-  const { loading, error, gameDetail } = useFetchGameById(gameId);
+  const { loading, error, gameDetail } = useFetchGameById(Number(gameId));
   const location = useLocation();
   const backLink = location.state?.from ?? "/search_games";
 
