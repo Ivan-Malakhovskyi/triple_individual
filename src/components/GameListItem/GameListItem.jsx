@@ -1,14 +1,15 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import styles from "./GameListItem.module.css";
 
 export const GameListItem = ({
   game: { id, background_image, name, genres },
 }) => {
+  const location = useLocation();
   // const path = !location.search ? `/games/${id}` : `/search_games/${id}`;
 
   return (
     <li key={id}>
-      <Link to={`/search_games/${id}`}>
+      <Link to={`/search_games/${id}`} state={{ from: location }}>
         <img className={styles.cardImage} src={background_image} alt={name} />
 
         <div className={styles.card}>

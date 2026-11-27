@@ -1,8 +1,14 @@
 import toast from "react-hot-toast";
+import { useSearchParams } from "react-router";
 
 export const useQueryParams = queryKey => {
-  const searchGame = "";
-  const handleSearch = () => {};
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchGame = searchParams.get(queryKey) ?? "";
+
+  const handleSearch = query => {
+    const newParams = query !== "" ? { search: query } : {};
+    setSearchParams(newParams);
+  };
 
   const handleFormSubmit = e => {
     e.preventDefault();

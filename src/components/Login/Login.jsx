@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { Navigate } from "react-router";
 import { fakeLoginApi } from "@/services/fakeLoginApi";
 import authContext from "@/context/auth/context";
 import styles from "./Login.module.css";
@@ -18,6 +19,7 @@ const Login = () => {
 
       if (resp.success) {
         onLogIn();
+        Navigate("/search_games", { replace: true });
         return resp;
       }
     } catch (error) {

@@ -22,9 +22,11 @@ export const getAll = async controller => {
   }
 };
 
-export const getByQuery = async (query = "") => {
+export const getByQuery = async (query = "", controller) => {
   try {
-    const resp = await apiClient.get(`/games?key=${KEY}&search=${query}`);
+    const resp = await apiClient.get(`/games?key=${KEY}&search=${query}`, {
+      signal: controller?.current?.signal,
+    });
 
     return resp.data.results;
   } catch (error) {

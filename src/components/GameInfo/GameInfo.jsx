@@ -1,55 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router";
+import { Link, NavLink, Outlet, useLocation, useParams } from "react-router";
 import { useFetchGameById } from "@/hooks";
-import { getGameById } from "@/services/gameService";
 import styles from "./GameInfo.module.css";
 
 const GameInfo = () => {
-  // const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState(null);
-  // const [gameDetail, setGameDetail] = useState([]);
-  const { loading, error, gameDetail } = useFetchGameById("NEED ID");
-  const controller = useRef();
-
-  // const redirectPath = !location.pathname.includes("search")
-  //   ? "/"
-  //   : "/search_games";
-  // const forwardLink = location.pathname.includes("search")
-  //   ? "search_games"
-  //   : "games";
-
-  // useEffect(() => {
-  //   if (!gameId) return;
-
-  //   const getMovieById = async () => {
-  //     if (controller.current) {
-  //       controller.current.abort();
-  //     }
-
-  //     controller.current = new AbortController();
-
-  //     try {
-  //       setLoading(true);
-
-  //       const resp = await getGameById(gameId, controller);
-
-  //       setGameDetail(resp);
-  //     } catch (error) {
-  //       if (error.code !== "ERR_CANCELLED") {
-  //         setError(error);
-  //         console.log(error);
-  //       }
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   getMovieById();
-  // }, [gameId]);
+  const { gameId } = useParams();
+  const { loading, error, gameDetail } = useFetchGameById(gameId);
+  const location = useLocation();
+  const backLink = location.state?.from ?? "/search_games";
 
   return (
     <section>
-      <Link to="/" className={styles.back}>
+      <Link to={backLink} className={styles.back}>
         Повернутися до колекції
       </Link>
 
@@ -78,7 +39,7 @@ const GameInfo = () => {
 
           <div className={styles.tabs}>
             <NavLink
-              to={`/search_games/id/reviews`}
+              to={`/search_games/${gameId}/reviews`}
               className={({ isActive }) =>
                 isActive ? `${styles.tab} ${styles.tabActive}` : ""
               }
@@ -88,7 +49,7 @@ const GameInfo = () => {
             </NavLink>
 
             <NavLink
-              to={`/search_games/id/new_review`}
+              to={`/search_games/${gameId}/new_review`}
               className={({ isActive }) =>
                 isActive ? `${styles.tab} ${styles.tabActive}` : ""
               }

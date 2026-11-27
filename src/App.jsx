@@ -1,13 +1,15 @@
 import { Routes, Route } from "react-router";
 import { Toaster } from "react-hot-toast";
+import { lazy } from "react";
 import { SharedLayout } from "./components/SharedLayout";
-import NotFoundPage from "./pages/NotFoundPage";
 import HomePage from "./pages/HomePage";
-import GamesSearchPage from "./pages/GamesSearchPage";
-import GameInfoPage from "./pages/GameInfoPage";
-import LoginPage from "./pages/LoginPage";
-import ReviewsPage from "./pages/ReviewsPage";
-import NewReviewPage from "./pages/NewReviewPage";
+
+const GamesSearchPage = lazy(() => import("./pages/GamesSearchPage"));
+const GameInfoPage = lazy(() => "./pages/GameInfoPage");
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const ReviewsPage = lazy(() => import("./pages/ReviewsPage"));
+const NewReviewPage = lazy(() => import("./pages/NewReviewPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const App = () => {
   return (
