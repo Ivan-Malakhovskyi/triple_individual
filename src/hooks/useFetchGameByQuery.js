@@ -47,6 +47,10 @@ export const useFetchGameByQuery = searchGame => {
     };
 
     fetchByQuery();
+
+    return () => {
+      controller.current?.abort();
+    };
   }, [searchGame]);
 
   return {
